@@ -5,9 +5,14 @@ from app.core.database import engine, Base, get_db
 import redis
 import os
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title="Interview Info App API")
+
+with engine.connect() as conn:
+    # if the database does not already have the capability, adds the app that allows for vector computation abilities
+    conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+    conn.commit()
+
+Base.metadata.create_all(bind=engine)
 
 # these are a couple of basic routes used to test the API and make sure that the database is connected properly
 @app.get("/")
