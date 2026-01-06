@@ -35,8 +35,37 @@ This starts the Database (Postgres), Cache (Redis), and Storage (MinIO):
 Bash
 
 docker compose up -d
+
 4. Run the Application
+To run the full system, you need two terminal tabs open:
+
+Terminal 1: The API (Uvicorn)
+This handles the web requests and the documentation.
+
 Bash
 
 uvicorn app.main:app --reload
-The API will be available at: http://localhost:8000
+API URL: http://localhost:8000
+
+Interactive Docs: http://localhost:8000/docs
+
+Terminal 2: The AI Worker (Celery)
+This handles the heavy "Linear Chain" AI processing in the background.
+
+Bash
+
+celery -A app.core.celery_app worker --loglevel=info
+5. Verify Your Setup
+Once both terminals are running, visit the Health Check to ensure the Python code is talking to Docker correctly:
+
+Check Health: http://localhost:8000/health
+
+Success looks like this:
+
+JSON
+
+{
+  "database": "connected",
+  "redis": "connected",
+  "environment": "development"
+}
