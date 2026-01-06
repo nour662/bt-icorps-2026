@@ -12,7 +12,7 @@ Run these commands in order:
 Bash
 
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/nour662/bt-icorps-2026.git
 cd BT-ICORPS-2026
 
 # Create and activate virtual environment (in project root folder)
