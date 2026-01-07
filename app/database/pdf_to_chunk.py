@@ -29,8 +29,8 @@ def process_file_to_chunks(file):
 
     # chunk text based on paragraph, then sentence, then character
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000, # determine optimal chunk size later
-        chunk_overlap=100,
+        chunk_size=600, # determine optimal chunk size later
+        chunk_overlap=100, # preserves context if awkward split
         separators=["\n\n", "\n", ".", " ", ""]
     )
 
