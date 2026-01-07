@@ -12,7 +12,11 @@ CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:63
 celery_app = Celery(
     "worker",
     broker=CELERY_BROKER_URL,
-    backend=CELERY_RESULT_BACKEND
+    backend=CELERY_RESULT_BACKEND,
+    include=[
+        "app.tasks.ingestion",
+        "app.tasks.evaluation"
+    ]
 )
 
 # configuration settings
