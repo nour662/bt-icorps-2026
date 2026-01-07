@@ -1,13 +1,14 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
-from core import database
+from app.core.database import Base
 
 
-class Team(database):
+class Team(Base):
     __tablename__ = "teams"
     id = Column(String, primary_key=True)
     name = Column(String)
+    
     # preliminary information -> can call to give additional information to robot
     primary_industry = Column(Text)
     secondary_industry = Column(Text)
@@ -25,7 +26,7 @@ class Team(database):
 
 
 
-class Hypotheses(database):
+class Hypotheses(Base):
     __tablename__ = "hypotheses"
     id = Column(String, primary_key=True)
     team_id = Column(String, ForeignKey("teams.id"))
@@ -36,29 +37,44 @@ class Hypotheses(database):
     embedding = Column(Vector(1536)) # embedding of hypotheses for future comparison
     team = relationship("Team", back_populates="hypotheses")
 
-class Customers(database):
+class Customers(Base):
     __tablename__ = "customers"
     id = Column(Integer, primary_key=True) # automatically creates primary key
     team_id = Column(String, ForeignKey("teams.id")) # foreign key
+
     customer_name = Column(String)
+    customer_industry = Column(Text)
+    customer_experience = Column(Text)
+
     customers_output = Column(Text) # store AI output
+
     team = relationship("Team", back_populates="hypotheses")
 
-class Interviews(database):
+class Interviews(Base):
     __tablename__ = "interviews"
     id = Column(Integer, primary_key=True)
-    s3_key = Column(String, unique=True) # s3 key for file access
     team_id = Column(String, ForeignKey("teams.id")) # foreign key
-    interviewee_name = Column(String)
-    interviews_output = Column(Text) # store AI output
-    team = relationship("Team", back_populates="hypotheses")
 
-class DocumentChunk(database):
+    s3_key = Column(String, unique=True) # s3 key for file access
+    interviewee_name = Column(String)
+
+    interviews_output = Column(Text) # store AI output
+
+    # define relationships
+    team = relationship("Team", back_populates="hypotheses")
+    # cleanup, delete data in DocumentChunk table if interview is deleted
+    chunks = relationship("DocumentChunk", back_populates="interview", cascade="all, delete-orphan")
+
+class DocumentChunk(Base):
     __tablename__ = "document_chunks"
     id = Column(Integer, primary_key=True)
+    team_id = Column(String, ForeignKey("teams.id")) # foreign key
+    interview_id = Column(Integer, ForeignKey("interviews.id"))
+
     s3_key = Column(String) # s3 key for file access
     team_id = Column(String, ForeignKey("teams.id"))
     interview_id = Column(Integer, ForeignKey("interviews.id"))
     content = Column(Text)
     embedding = Column(Vector(1536)) 
+
     interview = relationship("Interview", back_populates="chunks")
