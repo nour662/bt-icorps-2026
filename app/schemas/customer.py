@@ -14,8 +14,6 @@ class CustomerEvaluationBase(BaseModel):
     occupation : str
     experience_level : ExperienceLevel
 class CustomerEvaluationResponse(BaseModel):
-    is_good_fit : bool
-    score: int = Field(ge=0, le=100)
-    reasoning : str
-    suggested_questions: list[str]
+    customers_output : str
+    customers_output_score: int = Field(ge=0, le=100)
     
