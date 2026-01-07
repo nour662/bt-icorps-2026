@@ -64,7 +64,7 @@ async def check_persona(data: CustomerEvaluationBase, db: Session = Depends(get_
             "status" : result.status,
         }
 
-    @customer_profile_router.get("/results{id}", response_model=schemas.CustomerEvaluationResponse)
+    @customer_profile_router.get("/results{customer_id}", response_model=CustomerEvaluationResponse)
     async def get_customer_results(customer_id: int, db: Session = Depends(get_db)):
         customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
         if (customer.customers_output == None):

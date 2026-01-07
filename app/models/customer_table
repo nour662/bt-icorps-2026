@@ -15,5 +15,6 @@ class Customer(Base):
     customer_checked = Boolean(Text)
 
     customers_output = Column(Text) # store AI output
+    customers_output_score = Column(Integer)
 
     team = relationship("Team", back_populates="hypotheses")
