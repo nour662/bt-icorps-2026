@@ -11,6 +11,7 @@ class Customer(Base):
     customer_name = Column(String)
     customer_industry = Column(Text)
     customer_experience = Column(Text)
+    customer_occupation = Column(Text)
     customer_checked = Boolean(Text)
 
     customers_output = Column(Text) # store AI output
