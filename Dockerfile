@@ -17,4 +17,4 @@ COPY ./app /code/app
 EXPOSE 8000
 
 # Default command (overridden by docker-compose)
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]# Expose port
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
