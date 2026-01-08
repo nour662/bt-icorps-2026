@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from .database import get_db
+from app.core.database import get_db
 from . import models
 from app.tasks import evaluate_hypothesis_task # celery tasks that need to be called (will update as more celery tasks are created)
 from app.schemas.hypothesis import HypothesisEvaluationRequest, HypothesisEvaluationResponse
 
 evaluation_router = APIRouter(
-    prefix='/Hypothesis', tags=["Hypothesis"]
+    prefix='/hypothesis', tags=["Hypothesis"]
 )
 
 @evaluation_router.post("/evaluate")

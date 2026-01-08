@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .database import get_db
+from app.core.database import get_db
 from . import models
 from app.tasks import validate_profile_task # celery tasks that need to be called (will update as more celery tasks are created)
 from app.schemas.customer import CustomerEvaluationBase, CustomerEvaluationResponse
