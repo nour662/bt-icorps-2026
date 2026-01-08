@@ -12,5 +12,6 @@ class Hypotheses(Base):
     evalulated = Column(Boolean)
     hypotheses_output = Column(Text) # store AI output
     hypotheses_output_score = Column(Integer)
+    suggested_customer_profiles = Column(JSON)
     embedding = Column(Vector(1536)) # embedding of hypotheses for future comparison
     team = relationship("Team", back_populates="hypotheses")
