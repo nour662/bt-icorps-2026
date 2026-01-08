@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.core.database import get_db
 from . import models
 from app.tasks import validate_profile_task # celery tasks that need to be called (will update as more celery tasks are created)
-from app.schemas.customer import CustomerEvaluationBase, CustomerEvaluationResponse
+from app.schemas.customer import CustomerEvaluationBase, CustomerEvaluationResponse, RelevantCustomersList
 
 customer_profile_router = APIRouter(
     prefix="/customer", tags=["customer"]
@@ -73,6 +73,14 @@ async def check_persona(data: CustomerEvaluationBase, db: Session = Depends(get_
                 detail= "results not found"
             )
         return customer 
+    
+    # allows for the generation of sample customer_profiles to interview once a hypothesis is evaluated (this list will only be generated if the hypothesis has been evaluated to save tokens)
+    @customer_profile_router.get("/relevant_customers{hypothesis_id}", response_model=RelevantCustomersList)
+    async def get_relevant_customers(hypothesis_id: int, db: Session = Depends(get_db)):
+        hypothesis = db.query(models.Hypotheses).filter(models.Hypotheses.id == hypothesis_id).first()
+        return {
+            relevant_customers : hypothesis.suggested_customer_profiles
+        }
 
 
 

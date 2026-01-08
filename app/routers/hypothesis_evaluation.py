@@ -66,5 +66,6 @@ async def get_hypothesis_results(hypothesis_id: int, db: Session = Depends(get_d
                 status=404,
                 detail= "results not found"
         )
+    # the output and score will need to be set in the celery route
     return hypothesis
     
