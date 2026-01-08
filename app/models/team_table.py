@@ -12,11 +12,11 @@ class Team(Base):
     # preliminary information -> can call to give additional information to robot
     primary_industry = Column(Text)
     secondary_industry = Column(Text)
-    technology_background = Column(Text)
-    research_background = Column(Text)
-    commercialization_idea = Column(Text)
-    marketability = Column(Text)
-    ip_status = Column(Text)
+    # technology_background = Column(Text)
+    # research_background = Column(Text)
+    # commercialization_idea = Column(Text)
+    # marketability = Column(Text)
+    # ip_status = Column(Text)
     status = Column(String)
 
     # provide link to other tables

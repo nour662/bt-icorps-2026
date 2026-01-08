@@ -4,4 +4,6 @@ __pycache__/
 *.pyc
 .DS_Store
 postgres_data/
+pgdata/
+storage/
 minio_data/
