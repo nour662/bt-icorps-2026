@@ -54,33 +54,33 @@ async def check_persona(data: CustomerEvaluationBase, db: Session = Depends(get_
         "customer_id" : new_customer_profile.id,
     }
 
-    # this routes allows for "polling" of the task from the frontend. The frontend will continuously check on this task 
-    # in a polling loop and update the relevant frontend aspects when the status signifies that the task has finished
-    @customer_profile_router.get("/check_persona_status{task_id}")
-    async def get_status(task_id : str):
-        result = AsyncResult(task_id)
-        return {
-            "task_id" : task_id,
-            "status" : result.status,
-        }
+# this routes allows for "polling" of the task from the frontend. The frontend will continuously check on this task 
+# in a polling loop and update the relevant frontend aspects when the status signifies that the task has finished
+@customer_profile_router.get("/check_persona_status{task_id}")
+async def get_status(task_id : str):
+    result = AsyncResult(task_id)
+    return {
+        "task_id" : task_id,
+        "status" : result.status,
+    }
 
-    @customer_profile_router.get("/results{customer_id}", response_model=CustomerEvaluationResponse)
-    async def get_customer_results(customer_id: int, db: Session = Depends(get_db)):
-        customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
-        if (customer.customers_output == None):
-            raise HTTPException(
-                status=404,
-                detail= "results not found"
-            )
-        return customer 
-    
-    # allows for the generation of sample customer_profiles to interview once a hypothesis is evaluated (this list will only be generated if the hypothesis has been evaluated to save tokens)
-    @customer_profile_router.get("/relevant_customers{hypothesis_id}", response_model=RelevantCustomersList)
-    async def get_relevant_customers(hypothesis_id: int, db: Session = Depends(get_db)):
-        hypothesis = db.query(models.Hypotheses).filter(models.Hypotheses.id == hypothesis_id).first()
-        return {
-            relevant_customers : hypothesis.suggested_customer_profiles
-        }
+@customer_profile_router.get("/results{customer_id}", response_model=CustomerEvaluationResponse)
+async def get_customer_results(customer_id: int, db: Session = Depends(get_db)):
+    customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
+    if (customer.customers_output == None):
+        raise HTTPException(
+            status=404,
+            detail= "results not found"
+        )
+    return customer 
+
+# allows for the generation of sample customer_profiles to interview once a hypothesis is evaluated (this list will only be generated if the hypothesis has been evaluated to save tokens)
+@customer_profile_router.get("/relevant_customers{hypothesis_id}", response_model=RelevantCustomersList)
+async def get_relevant_customers(hypothesis_id: int, db: Session = Depends(get_db)):
+    hypothesis = db.query(models.Hypotheses).filter(models.Hypotheses.id == hypothesis_id).first()
+    return {
+        relevant_customers : hypothesis.suggested_customer_profiles
+    }
 
 
 
