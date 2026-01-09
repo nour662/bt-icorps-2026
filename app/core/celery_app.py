@@ -14,8 +14,10 @@ celery_app = Celery(
     broker=CELERY_BROKER_URL,
     backend=CELERY_RESULT_BACKEND,
     include=[
-        "app.tasks.ingestion",
-        "app.tasks.evaluation"
+        #"app.tasks.ingestion",
+        #"app.tasks.evaluation"
+        "app.tasks.initialize_db",
+        "tasks.testing"
     ]
 )
 
