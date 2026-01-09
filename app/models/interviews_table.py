@@ -16,8 +16,4 @@ class Interviews(Base):
     # define relationships
     team = relationship("Team", back_populates="hypotheses")
     # cleanup, delete data in DocumentChunk table if interview is deleted
-<<<<<<< HEAD
-    #chunks = relationship("DocumentChunk", back_populates="interview", cascade="all, delete-orphan")
-=======
     chunks = relationship("DocumentChunk", back_populates="interview", cascade="all, delete-orphan")
->>>>>>> origin/main
