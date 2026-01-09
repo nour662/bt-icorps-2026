@@ -12,7 +12,7 @@ class Customer(Base):
     customer_industry = Column(Text)
     customer_experience = Column(Text)
     customer_occupation = Column(Text)
-    customer_checked = Boolean(Text)
+    customer_checked = Column(Boolean, default=False)
 
     customers_output = Column(Text) # store AI output
     customers_output_score = Column(Integer)

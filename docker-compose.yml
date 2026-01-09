@@ -44,6 +44,7 @@ services:
     depends_on:
       - db
       - redis
+      - minio
   worker:
     build: .
     command: celery -A app.worker.celery_app worker --loglevel=info
@@ -53,6 +54,7 @@ services:
     depends_on:
       - redis
       - db
+      - minio
 
 volumes:
   postgres_data:

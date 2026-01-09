@@ -8,6 +8,7 @@ class Team(Base):
     __tablename__ = "teams"
     id = Column(String, primary_key=True)
     name = Column(String)
+    password_hash = Column(String, nullable=False)
     
     # preliminary information -> can call to give additional information to robot
     primary_industry = Column(Text)

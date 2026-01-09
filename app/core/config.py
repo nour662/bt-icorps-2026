@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "bt-icorps-2026"
     DEBUG: bool = True
 
+    # DATABASE
+
     # The types here (str) tell Python how to treat the .env values
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
@@ -19,15 +21,21 @@ class Settings(BaseSettings):
     def DATABASE_URL(self) -> str:
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
 
+    # AUTHENTICATION / SECURITY
+    JWT_SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_HOURS: int = 24
+    JWT_ALGORITHM: str 
 
+    # OPENAI
     OPENAI_API_KEY: str
     
+    # OBJECT STORAGE (MINIO/S3)
     S3_ENDPOINT: str
     S3_ACCESS_KEY: str
     S3_SECRET_KEY: str
     S3_BUCKET_NAME: str
 
-    # This line tells Pydantic to look for the .env file
+    # PYDANTIC SETTINGS CONFIG
     model_config = SettingsConfigDict(
                         env_file=".env",
                         extra="ignore"

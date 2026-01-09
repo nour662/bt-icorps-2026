@@ -9,7 +9,7 @@ from app.core.database import engine, Base
 
 # Import models so Base can see them for create_all
 from app.models.team_table import Team
-from app.models.customer_table import Customers
+from app.models.customers_table import Customers
 from app.models.hypotheses_table import Hypotheses
 from app.models.interviews_table import Interviews
 from app.models.document_chunk_table import DocumentChunk
@@ -56,6 +56,7 @@ def check_tables():
             columns = [c['name'] for c in inspector.get_columns(table)]
             print(f"   Columns: {columns}")
 
+# main for testing
 if __name__ == "__main__":
     print("Sending initialization task to Celery Worker...")
     
@@ -64,10 +65,10 @@ if __name__ == "__main__":
     
     print(f"Waiting for worker (Service: worker) to finish task {task_result.id}...")
     
-    # 2. Call .get() on the task_result, NOT the function itself
+    # 2. Call .get() on the task_result
     try:
         final_output = task_result.get(timeout=15)
-        print(f"\n✅ Status: {final_output.get('status')}")
+        print(f"\nStatus: {final_output.get('status')}")
         for log in final_output.get('logs', []):
             print(f"   - {log}")
     except Exception as e:
