@@ -16,6 +16,7 @@ from app.core.config import settings
 #imports file from system prompts
 from app.systemprompts.hyp_evaluation_prompt import EVALUATION_PROMPT
 
+
 #Step 1 loading data
 loader = PyPDFLoader("PDF file path here")
 data = loader.load()
