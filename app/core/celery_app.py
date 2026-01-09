@@ -17,6 +17,7 @@ celery_app = Celery(
         #"app.tasks.ingestion",
         #"app.tasks.evaluation"
         "app.tasks.initialize_db",
+        "tasks.testing"
     ]
 )
 
