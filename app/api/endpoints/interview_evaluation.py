@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
 from app.core.database import get_db
 from app import models
 from app.tasks import evaluate_interviews
@@ -11,7 +10,10 @@ interview_evaluation_router = APIRouter(
 
 
 # Need: 
+# route to get an s3 signed url (the frontend will upload the file using that url)
+# route to chunk and embed the files (the frontend would send the object key and the backend would retreive the file by the key and then get the text chunking it and embedding it
 
+# route to evaluate the interview (would take a hypothesis as a parameter)
 # routes to start interview evaluation (based on a transcript)
 @interview_evaluation_router.post("/upload_transcript")
 async def upload_file(file: UploadFile = File()):
@@ -22,7 +24,8 @@ async def upload_file(file: UploadFile = File()):
             status_code=400,
             detail="Invalid file type"
         )
-    
+
+
 
 
 

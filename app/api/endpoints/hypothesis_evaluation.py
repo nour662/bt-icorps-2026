@@ -13,18 +13,8 @@ evaluation_router = APIRouter(
 async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = Depends(get_db)):
     team_id = data.team_id
     hypothesis = data.hypothesis
-    team = db.query(models.Team).filter(models.Team.id == team_id).first()
-
-    if not team: 
-        # adding the team to the database if this is their first time using the platform
-        team = models.Team(
-            id = team_id,
-            name = data.name,
-            industry = data.industry
-            # can add new info if needed (just want to make sure we don't have to collect too much from the user)
-            db.add(team)
-            db.commit()
-        )
+    # team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    
      # adding the hypothesis to the database
 
     hypothesis_addition = models.Hypotheses(
