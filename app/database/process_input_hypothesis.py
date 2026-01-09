@@ -27,9 +27,23 @@ def save_hypothesis(db: Session, team_id: str, hypothesis_input: str, h_type: st
         db.rollback()
         print(f"Error: {e}")
 
-def embed_hypothesis(input_hypothesis):
+def embed_hypothesis():
+    # check token size! OR request limit
+    
+    # get both customer/ecosystem hypothesis
     embeddings_model = OpenAIEmbeddings(model="text-embedding-3-small")
 
     hypothesis_vector = embeddings_model.embed_query(input_hypothesis) # embed hypothesis inputted by user
+    
+    # add into table
+        # set embeddings here!
+        # only analyze based on value of evaluated
+    hypos = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
+    
+    # assumes analysis func returns a dictionary (but again can be updated)
+    hypos.embedding = hypothesis_embedding
+    
+    db.commit()
+
 
     return hypothesis_vector

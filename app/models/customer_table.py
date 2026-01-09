@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
-from app.core.database import Base
+from app.core.db.base import Base
 
 class Customer(Base):
     __tablename__ = "customers"
@@ -13,6 +13,8 @@ class Customer(Base):
     customer_experience = Column(Text)
     customer_occupation = Column(Text)
     customer_checked = Column(Boolean, default=False)
+    
+    #hypothesis = Column(String)
 
     customers_output = Column(Text) # store AI output
     customers_output_score = Column(Integer)

@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from app.core.database import engine, Base, get_db
-from app.storage.init import ensure_bucket_exists
+from app.core.db.database import engine, get_db
+# from app.core.db.base import Base
+# from app.storage.init import ensure_bucket_exists
 import redis
 import os
 
@@ -13,12 +14,12 @@ with engine.connect() as conn:
     conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
     conn.commit()
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 # checks to make sure the s3 bucket for interview data storage exist and was not deleted somehow
-@app.on_event("startup")
-def startup():
-    ensure_bucket_exists()
+# @app.on_event("startup")
+# def startup():
+#     ensure_bucket_exists()
 
 # these are a couple of basic routes used to test the API and make sure that the database is connected properly
 @app.get("/")

@@ -12,31 +12,32 @@ evaluation_router = APIRouter(
 @evaluation_router.post("/evaluate")
 async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = Depends(get_db)):
     team_id = data.team_id
+    hypothesis_type = data.hypothesis_type
     hypothesis = data.hypothesis
+    
     # team = db.query(models.Team).filter(models.Team.id == team_id).first()
     
      # adding the hypothesis to the database
 
     hypothesis_addition = models.Hypotheses(
         team_id = team_id,
-        hypothesis_type = data.hypothesis_type,
-        hypothesis = data.hypothesis,
-        evaluated = False,
+        hypothesis_type = hypothesis_type,
+        hypothesis = hypothesis
     )
     db.add(hypothesis_addition)
     db.commit()
 
     # calling celery to pass on the task of evaluating the hypothesis
     task = evaluate_hypothesis_task.delay(
-        team_id = team_id,
-        hypothesis_type = data.hypothesis_type,
-        hypothesis = data.hypothesis, 
-        industry = data.industry
+        hypothesis_id = hypothesis_addition.id,
+        hypothesis = hypothesis_addition.hypothesis
     )
     return (
-        "task_id" : task.id,
-        "status" : "Processing",
-        "hypothesis_id" : hypothesis_addition.id,
+        {
+            "task_id" : task.id,
+            "status" : "Processing",
+            "hypothesis_id" : hypothesis_addition.id,
+        }
     )
 
 # route to check on the status of the hypothesis evaluation in celery

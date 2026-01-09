@@ -3,13 +3,12 @@ from enum import Enum
 
 class HypothesisType(str, Enum):
     ECOSYSTEM = "Ecosystem"
-    CONSUMER = "Consumer"
+    CUSTOMER = "Customer"
 
 class HypothesisEvaluationRequest(BaseModel):
     team_id: str
-    hypothesis: str
-    industry: str | None = None
     hypothesis_type: HypothesisType
+    hypothesis: str
     # can add an interview questions parameter here if we chose to have the application evaluate hypothesis and question matching rather 
     # question: would we be better off uploading an interview transcript 
 class HypothesisEvaluationResponse(BaseModel):

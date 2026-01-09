@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
-from app.core.database import Base
+from app.core.db.base import Base
 
 class DocumentChunk(Base):
     __tablename__ = "document_chunks"
