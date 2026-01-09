@@ -19,6 +19,7 @@ class Team(Base):
     # marketability = Column(Text)
     # ip_status = Column(Text)
     status = Column(String)
+    passcode = Column(String)
 
     # provide link to other tables
     hypotheses = relationship("Hypothesis", back_populates="team") # sync to hypotheses
