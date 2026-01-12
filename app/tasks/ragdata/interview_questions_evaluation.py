@@ -1,4 +1,3 @@
-
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts.chat import ChatPromptTemplate
@@ -6,7 +5,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_core.runnables import RunnablePassthrough 
 from langchain_core.output_parsers import StrOutputParser
-from app.core.db.database import get_db
 
 #apparently this is the correct import path for vector store 
 # when using langchain but it might be sequal algemy not sure DOUBLE CHECK 
@@ -16,8 +14,7 @@ from langchain_community.vectorstores import PGVector
 from app.core.config import settings
 
 #imports file from system prompts
-from app.systemprompts.hyp_evaluation_prompt import EVALUATION_PROMPT
-
+from app.systemprompts.interview_questions_evaluation_prompt import INTERVIEW_QUESTION_EVALUATION_PROMPT
 
 #Step 1 loading data
 loader = PyPDFLoader("PDF file path here")
@@ -55,13 +52,13 @@ rag_chain = (
     "guidelines": retriever | format_docs, 
     "hypothesis": RunnablePassthrough()     
     }
-    | EVALUATION_PROMPT                 # Uses the imported template
+    | INTERVIEW_QUESTION_EVALUATION_PROMPT        # Uses the imported template
     | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
     | StrOutputParser()
 )
 
-#celery route for tasks evaluate_hypothesis_task
+#celery route for tasks user_persona_rec_task
 # --- CELERY TASK ---
-def evaluate_hypothesis_task(user_hypothesis: str):
-    result = rag_chain.invoke(user_hypothesis)
-    return result
+#def evaluate_hypothesis_task(user_hypothesis: str):
+#    result = rag_chain.invoke(user_hypothesis)
+#    return result
