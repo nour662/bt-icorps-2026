@@ -11,7 +11,7 @@ from langchain_postgres import PGVector
 from app.core.config import settings
 from app.systemprompts.hyp_evaluation_prompt import EVALUATION_PROMPT
 from app.core.config import settings
-from app.database.process_input_hypothesis import embed_hypothesis
+from database.process_input_hypothesis import embed_hypothesis
 from sqlalchemy.orm import Session
 from app.models.hypotheses_table import Hypotheses
 
@@ -136,4 +136,3 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
         db.close()
 
     return "Evaluation Task Finished" 
-    
