@@ -70,8 +70,8 @@ rag_chain = (
 #    result = rag_chain.invoke(user_hypothesis)
 #    return result
 
-@celery_app.task(name="evaluate_hypothesis_task")
-def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):
+@celery_app.task(name="evaluate_hypothesis_task", bind=True)
+def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):
     
     #1. Opens a DB session.
     #2. Runs the RAG chain.
@@ -93,7 +93,8 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
         
         # This performs the Vector Search + OpenAI Generation
         ai_response = rag_chain.invoke(rag_input)
-        
+        print("\n" + ai_response + "\n")
+        print(type(ai_response))
         # C. PARSE SCORE (Basic Logic)
         score = 0
         if "Score:" in ai_response:
@@ -111,9 +112,10 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
         
         if record:
-            record.ai_evaluation = ai_response  # Ensure your table has this column!
-            record.score = score                # Ensure your table has this column!
-            record.status = "COMPLETED"         # Critical for Frontend Polling
+            record.hypotheses_output = ai_response  # Ensure your table has this column!
+            print("\n" + record.hypotheses_output + "\n")
+            record.hypotheses_output_score = score                # Ensure your table has this column!
+            record.evaluated = True        # Critical for Frontend Polling
             db.commit()
             print(f"Success: Updated Hypothesis {hypothesis_id}")
         else:
@@ -126,9 +128,9 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
 
         #Find THESE ROW NAMES AND MAKE SURE THEY MATCH THE DB
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
-        if record:
-            record.status = "FAILED"
-            db.commit()
+        # if record:
+        #     record.status = "FAILED"
+        #     db.commit()
             
     finally:
         # E. CLOSE DB SESSION

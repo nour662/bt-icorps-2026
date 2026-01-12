@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     def DATABASE_URL(self) -> str:
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
 
+    # CELERY
+    CELERY_BROKER_URL : str
+    CELERY_RESULT_BACKEND : str
+
     # AUTHENTICATION / SECURITY
     JWT_SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_HOURS: int = 24
@@ -28,6 +32,7 @@ class Settings(BaseSettings):
 
     # OPENAI
     OPENAI_API_KEY: str
+    OPENAI_BASE_URL: str
     
     # OBJECT STORAGE (MINIO/S3)
     S3_ENDPOINT: str
