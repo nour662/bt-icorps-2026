@@ -28,6 +28,7 @@ embeddings = OpenAIEmbeddings(
     model="text-embedding-3-small"
 )
 
+
 # Create the DB connection URL but not sure if the .replace is needed or correct
 #Note: if "postgresql://" in connection_url and "psycopg" not in connection_url: connection_url = connection_url.replace("postgresql://", "postgresql+psycopg://")
 connection_url = str(settings.DATABASE_URL)
@@ -35,7 +36,7 @@ connection_url = str(settings.DATABASE_URL)
 # 2. Connect to the "hypothesis_rules" DB collection
 vector_store = PGVector(
     embeddings=embeddings,
-    collection_name="hypothesis_rules", #Match the name of the table in the DB
+    collection_name="hypothesis_rules", ##does it need to be past_data_table?
     connection=connection_url,
     use_jsonb=True,
 )
@@ -51,7 +52,7 @@ def format_docs(docs):
 rag_chain = (
     {
         # SEARCH STEP: Take the hypothesis text, find matching rules in DB
-        "guidelines": itemgetter("hypothesis") | retriever | format_docs,
+        #"guidelines": itemgetter("hypothesis") | retriever | format_docs,
         
         # PASSTHROUGH: Pass the raw data to the prompt
         "hypothesis": itemgetter("hypothesis"),
@@ -69,6 +70,7 @@ rag_chain = (
 #def evaluate_hypothesis_task(user_hypothesis: str):
 #    result = rag_chain.invoke(user_hypothesis)
 #    return result
+
 
 @celery_app.task(name="evaluate_hypothesis_task")
 def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):
@@ -106,8 +108,6 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
 
         # D. UPDATE DATABASE
         # Fetch the row we created in the API
-
-        #FIND THESE ROW NAMES AND MAKE SURE THEY MATCH THE DB
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
         
         if record:
@@ -123,8 +123,6 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
         print(f"Worker Failed: {e}")
         db.rollback()
         # Update status to FAILED so frontend doesn't hang
-
-        #Find THESE ROW NAMES AND MAKE SURE THEY MATCH THE DB
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
         if record:
             record.status = "FAILED"
