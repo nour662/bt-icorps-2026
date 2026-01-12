@@ -17,7 +17,7 @@ from app.models.hypotheses_table import Hypotheses
 
 #needed for celery task
 from app.core.celery_app import celery_app
-from app.database.session import SessionLocal  # <--- Check what this path is and if we have it 
+from app.core.db.database import SessionLocal  # <--- Check what this path is and if we have it 
 from sqlalchemy.orm import Session
 
 # 1. The reason why we are embedding is because yes we are receving the vectors from the DB
@@ -71,8 +71,7 @@ rag_chain = (
 #    return result
 
 @celery_app.task(name="evaluate_hypothesis_task")
-def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesis_type: str,
-                        team_id: str, db: Session):
+def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):
     
     #1. Opens a DB session.
     #2. Runs the RAG chain.
@@ -81,7 +80,7 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
     print(f" Worker check for Hypothesis ID: {hypothesis_id}")
     
     # A. OPEN DB SESSION (Manually) need to change variable names to whatever is in the db
-    db: Session = SessionLocal()
+    db = SessionLocal()
     
     try:
         # B. RUN RAG CHAIN

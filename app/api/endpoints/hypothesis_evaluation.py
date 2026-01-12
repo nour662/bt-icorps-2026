@@ -31,8 +31,9 @@ async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = D
     # calling celery to pass on the task of evaluating the hypothesis
     task = evaluate_hypothesis_task.delay(
         hypothesis_id = hypothesis_addition.id,
-        hypothesis = hypothesis_addition.hypothesis,
+        hypothesis_text = hypothesis_addition.hypothesis,
         hypothesis_type = hypothesis_type,
+        team_id = team_id
     )
     return (
         {
