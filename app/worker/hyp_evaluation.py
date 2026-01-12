@@ -20,9 +20,8 @@ from app.core.celery_app import celery_app
 from app.core.db.database import SessionLocal  # <--- Check what this path is and if we have it 
 from sqlalchemy.orm import Session
 
-# 1. The reason why we are embedding is because yes we are receving the vectors from the DB
-# But when you receive vectors they are just numbers. We need to embed the vectors inorder for 
-# the LLM to understand them and use them for searching and matching.
+# This embedds the celery task that contains inputs such as the 
+# hypothesis text, team id, and hypothesis type
 embeddings = OpenAIEmbeddings(
     api_key=settings.OPENAI_API_KEY, 
     model="text-embedding-3-small"
@@ -52,15 +51,20 @@ def format_docs(docs):
 rag_chain = (
     {
         # SEARCH STEP: Take the hypothesis text, find matching rules in DB
-        #"guidelines": itemgetter("hypothesis") | retriever | format_docs,
+        # itemgetter gets the hypothesis from the input of the celery task
+        # Then we pass it to the retriever to get relevant docs from the vector DB
+        "guidelines": itemgetter("hypothesis") | retriever | format_docs,
         
         # PASSTHROUGH: Pass the raw data to the prompt
+        # The prompt will use these values to fill in the template
         "hypothesis": itemgetter("hypothesis"),
         "team_id": itemgetter("team_id"),
         "hypothesis_type": itemgetter("hypothesis_type")
     }
     | EVALUATION_PROMPT
     | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
+
+    # OUTPUT PARSING STEP: Get the final text output and return as string
     | StrOutputParser()
 )
 
@@ -87,6 +91,7 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
     try:
         # B. RUN RAG CHAIN
         # We pass the arguments directly into the chain
+        #rag input is taking the the users hypothesis and then being passed into the rag chain
         rag_input = {
             "hypothesis": hypothesis_text,
             "team_id": team_id,
