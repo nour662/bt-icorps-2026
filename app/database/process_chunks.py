@@ -39,7 +39,7 @@ if __name__ == "__main__":
     # main for testing, print output to see if working
     print("--- STEP 1: Main block reached ---", flush=True)
     try:
-        from app.core.database import SessionLocal
+        from app.core.db.database import SessionLocal
         db = SessionLocal()
         print("--- STEP 2: DB Session created ---", flush=True)
         process_chunks(db, interview_id=1)

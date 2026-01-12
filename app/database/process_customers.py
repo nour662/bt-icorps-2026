@@ -6,7 +6,7 @@ from app.models.customer_table import Customers
 
 
 
-def save_(db: Session, 
+def save_customers(db: Session, 
           team_id: str, 
           name: str, 
           industry: str, 

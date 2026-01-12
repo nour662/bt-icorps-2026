@@ -3,8 +3,8 @@ from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
 from app.core.db.base import Base
 
-class Customer(Base):
-    __tablename__ = "customers"
+class Interviewee(Base):
+    __tablename__ = "interviewee"
     id = Column(Integer, primary_key=True) # automatically creates primary key
     team_id = Column(String, ForeignKey("teams.id")) # foreign key
 
@@ -14,9 +14,7 @@ class Customer(Base):
     customer_occupation = Column(Text)
     customer_checked = Column(Boolean, default=False)
     
-    #hypothesis = Column(String)
-
     customers_output = Column(Text) # store AI output
     customers_output_score = Column(Integer)
 
-    team = relationship("Team", back_populates="hypotheses")
+    team = relationship("Team", back_populates="interviewee")

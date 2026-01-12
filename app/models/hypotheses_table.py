@@ -11,6 +11,7 @@ class Hypotheses(Base):
     hypothesis = Column(Text)
     
     evalulated = Column(Boolean, default=False)
+    
     hypotheses_output = Column(Text) # store AI output
     hypotheses_output_score = Column(Integer)
     
