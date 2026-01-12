@@ -4,9 +4,15 @@ from dotenv import load_dotenv #dotenv to read from env
 from sqlalchemy.orm import Session
 from app.models.hypotheses_table import Hypotheses
 from app.core.db.database import SessionLocal
+import tiktoken
 
+MAX_HYPOTHESIS_TOKENS = 3000 # set max value -> can change later
 
 def save_hypothesis(db: Session, team_id: str, hypothesis_input: str, h_type: str):
+    token_count = get_tokens(hypothesis_input)
+    if token_count > MAX_HYPOTHESIS_TOKENS:
+        print(f"Hypothesis is too long")
+        return False
     # vector = embed_hypothesis(hypothesis_input)
 
     # creating database object
@@ -52,3 +58,8 @@ def embed_hypothesis(hypothesis_id:int, hypothesis_text:str):
         db.rollback()
     finally: 
         db.close()
+
+
+def get_tokens(text: str, model="text-embedding-3-small"):
+    encoding = tiktoken.encoding_for_model(model)
+    return len(encoding.encode(text))
