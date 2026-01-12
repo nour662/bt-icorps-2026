@@ -11,8 +11,8 @@ class Team(Base):
     password_hash = Column(String, nullable=False)
     
     # preliminary information -> can call to give additional information to robot
-    primary_industry = Column(Text)
-    secondary_industry = Column(Text)
+    industry = Column(Text)
+    #secondary_industry = Column(Text)
     # technology_background = Column(Text)
     # research_background = Column(Text)
     # commercialization_idea = Column(Text)
@@ -21,8 +21,8 @@ class Team(Base):
     status = Column(String)
 
     # provide link to other tables
-    hypotheses = relationship("Hypotheses", back_populates="team") # sync to hypotheses
-    interviewees = relationship("Interviewees", back_populates="team") # sync to interviews
-    interviews = relationship("Interviews", back_populates="team") # sync to customers
-    ai_interviewees = relationship("AI_Interviewees", back_populates="team")
+    # hypotheses = relationship("Hypotheses", back_populates="team") # sync to hypotheses
+    # interviewees = relationship("Interviewees", back_populates="team") # sync to interviews
+    # interviews = relationship("Interviews", back_populates="team") # sync to customers
+    # ai_interviewees = relationship("AI_Interviewees", back_populates="team")
 

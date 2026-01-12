@@ -4,9 +4,9 @@ from sqlalchemy import text
 from app.core.db.database import engine, get_db
 
 # importing routes
-from app.api.endpoints.teams import router as teams_router
-from app.api.endpoints.hypothesis_evaluation import router as hypothesis_router 
-from app.api.endpoints.customer_profile import router as interviewee_router 
+from app.api.endpoints.teams import teams_router as teams_router
+from app.api.endpoints.hypothesis_evaluation import evaluation_router as hypothesis_router 
+from app.api.endpoints.customer_profile import customer_profile_router as interviewee_router 
 
 
 

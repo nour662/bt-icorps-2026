@@ -24,5 +24,5 @@ class PastData(Base):
     
     
     # team = relationship("Team", back_populates="past_data")
-    chunks = relationship("DocumentChunk", back_populates="interviews", cascade="all, delete-orphan")
+    # chunks = relationship("DocumentChunk", back_populates="interviews", cascade="all, delete-orphan")
 

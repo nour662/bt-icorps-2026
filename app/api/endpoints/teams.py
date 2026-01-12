@@ -1,18 +1,21 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 from app.core.db.database import get_db
 from app import models
-from app.tasks import evaluate_interviews
-from app.schemas.team import NewTeam
-from .auth_helper.password_security import hash_password
+#from app.worker import evaluate_interviews
+from app.schemas.team import NewTeam, TeamLogin
+from .auth_helper.password_security import hash_password, verify_password
 
 
-users_router = APIRouter(
+teams_router = APIRouter(
     prefix='/teams', tags=["Teams"]
 )
 
-@users_router.post("/sign_in")
-async def authenticate_team(team_id: str, password: str, db: Session = Depends(get_db)):
+@teams_router.post("/sign_in")
+async def authenticate_team(data: TeamLogin, db: Session = Depends(get_db)):
     # first look for the team: 
+    team_id = data.team_id
+    password = data.password
     team = db.query(models.Team).filter(models.Team.id == team_id).first()
     if not team:
         raise HTTPException(
@@ -29,7 +32,7 @@ async def authenticate_team(team_id: str, password: str, db: Session = Depends(g
         "message" : "Login successful"
     }
 
-@users_router.post("create_account")
+@teams_router.post("/create_account")
 async def create_team(data: NewTeam, db: Session = Depends(get_db)):
     team = models.Team(
         id = data.team_id,

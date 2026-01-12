@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.db.database import get_db
 from app import models
-from app.tasks import evaluate_interviews
+from app.worker import evaluate_interviews
 from app.schemas.
 
 from sqlalchemy.orm import Session
@@ -43,7 +43,9 @@ async def process_document(team_id: str, interviewee_name: str, s3_key: str, db:
     )
     db.add(new_interview)
     db.commit()
-    db.refresh(new_interview)
+    return {
+        "message" : "testing"
+    }
     
 
 

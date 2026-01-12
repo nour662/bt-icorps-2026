@@ -7,3 +7,6 @@ class Team(BaseModel):
 
 class NewTeam(Team):
     password : str
+class TeamLogin(BaseModel):
+    team_id : str
+    password : str

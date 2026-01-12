@@ -16,6 +16,6 @@ class Interviews(Base):
     interviews_output = Column(Text) # store AI output
 
     # define relationships
-    team = relationship("Team", back_populates="interviews")
+    # team = relationship("Team", back_populates="interviews")
     # cleanup, delete data in DocumentChunk table if interview is deleted
-    chunks = relationship("DocumentChunk", back_populates="interviews", cascade="all, delete-orphan")
+    #chunks = relationship("DocumentChunk", back_populates="interviews", cascade="all, delete-orphan")

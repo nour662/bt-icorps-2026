@@ -16,4 +16,4 @@ class DocumentChunk(Base):
     embedding = Column(Vector(1536)) 
 
     # python syntax, create direct connection to Interview class
-    interviews = relationship("Interviews", back_populates="chunks") 
+    #interviews = relationship("Interviews", back_populates="chunks") 

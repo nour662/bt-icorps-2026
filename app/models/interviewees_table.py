@@ -17,4 +17,4 @@ class Interviewees(Base):
     customers_output = Column(Text) # store AI output
     customers_output_score = Column(Integer)
 
-    team = relationship("Team", back_populates="interviewees")
+    # team = relationship("Team", back_populates="interviewees")

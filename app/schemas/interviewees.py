@@ -10,19 +10,20 @@ class ExperienceLevel(str, Enum):
 
 # 1. The base data for an interviewee (The "Persona")
 class IntervieweeBase(BaseModel):
+    team_id : str
     industry: str
     occupation: str
     experience_level: ExperienceLevel
 
 # 2. Used for the POST /check_persona request
-class IntervieweeCreate(IntervieweeBase):
+class IntervieweeEvaluationBase(IntervieweeBase):
     team_id: str
     hypothesis: str
     name: str
 
 # 3. Used for the GET /results/{id} response
 # This matches your Interviewees table columns exactly
-class IntervieweeResponse(IntervieweeBase):
+class IntervieweeEvaluationResponse(IntervieweeBase):
     id: int
     team_id: str
     customer_name: str

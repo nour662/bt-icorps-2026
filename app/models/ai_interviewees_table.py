@@ -15,5 +15,5 @@ class AI_Interviewees(Base):
     ai_output = Column(Text) # store AI output
 
     # link back to parents
-    team = relationship("Team", back_populates="ai_interviewees")
-    hypotheses = relationship("Hypotheses", back_populates="ai_interviewees")
+    # team = relationship("Team", back_populates="ai_interviewees")
+    # hypotheses = relationship("Hypotheses", back_populates="ai_interviewees")

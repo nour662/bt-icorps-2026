@@ -6,8 +6,8 @@ from app.core.db.database import get_db
 from app.models.interviewees_table import Interviewees # Your specific model
 from app.models.hypotheses_table import Hypotheses
 from app.models.team_table import Team
-from app.worker import evaluate_interviewee_task # Updated task name
-from app.schemas.interviewees import IntervieweeCreate, IntervieweeResponse, RelevantIntervieweesList
+from app.worker.interviewee_evaluation import evaluate_interviewee_task # Updated task name
+from app.schemas.interviewees import IntervieweeEvaluationBase, IntervieweeResponse, RelevantIntervieweesList
 
 interviewee_router = APIRouter(
     prefix="/interviewee", tags=["Interviewee"]

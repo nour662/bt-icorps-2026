@@ -1,15 +1,16 @@
-from fastapi import APIRouter
-from app.core.database import get_db
-from . import models
-from app.tasks import validate_profile_task # celery tasks that need to be called (will update as more celery tasks are created)
-from app.schemas.customer import CustomerEvaluationBase, CustomerEvaluationResponse, RelevantCustomersList
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.core.db.database import get_db
+from app import models
+from app.worker.interviewee_evaluation import evaluate_interviewee_profile # celery tasks that need to be called (will update as more celery tasks are created)
+from app.schemas.interviewees import IntervieweeEvaluationBase, IntervieweeEvaluationResponse, RelevantIntervieweesList
 
 customer_profile_router = APIRouter(
-    prefix="/customer", tags=["customer"]
+    prefix="/interviewee", tags=["customer"]
 )
 
 @customer_profile_router.post("/check_persona")
-async def check_persona(data: CustomerEvaluationBase, db: Session = Depends(get_db)):
+async def check_persona(data: IntervieweeEvaluationBase, db: Session = Depends(get_db)):
     team_id = data.team_id
     hypothesis = data.hypothesis
     team = db.query(models.Team).filter(models.Team.id == team_id).first()      # finds the team with the given id (uses ORM to increase compatibility with FastAPI and prevent SQL injections)
@@ -27,7 +28,7 @@ async def check_persona(data: CustomerEvaluationBase, db: Session = Depends(get_
             detail="Please evaluate your hypothesis first"
         )
     # creating the persona and adding them to the customer profiles database: 
-    new_customer_profile = models.Customer(
+    new_customer_profile = models.Interviewee(
         customer_name = data.name,
         customer_industry = data.industry,
         customer_occupation = data.occupation,
@@ -40,7 +41,7 @@ async def check_persona(data: CustomerEvaluationBase, db: Session = Depends(get_
     #db.refresh(new_customer_profile)
     # passing on the rest of the task to celery for management (task is to check whether the profile is valid by calling OpenAI)
     # assuming that the name of the celery task is "evaluate_customer_profile"
-    task = evaluate_customer_profile.delay(
+    task = evaluate_interviewee_profile.delay(
         name = data.name,
         industry = data.industry,
         occupation = data.occupation,
@@ -64,18 +65,18 @@ async def get_status(task_id : str):
         "status" : result.status,
     }
 
-@customer_profile_router.get("/results{customer_id}", response_model=CustomerEvaluationResponse)
-async def get_customer_results(customer_id: int, db: Session = Depends(get_db)):
-    customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
-    if (customer.customers_output == None):
+@customer_profile_router.get("/results{customer_id}", response_model=IntervieweeEvaluationResponse)
+async def get_customer_results(interviewee_id: int, db: Session = Depends(get_db)):
+    interviewee = db.query(models.Interviewee).filter(models.Interviewee.id == interviewee_id).first()
+    if (interviewee.customers_output == None):
         raise HTTPException(
             status=404,
             detail= "results not found"
         )
-    return customer 
+    return interviewee 
 
 # allows for the generation of sample customer_profiles to interview once a hypothesis is evaluated (this list will only be generated if the hypothesis has been evaluated to save tokens)
-@customer_profile_router.get("/relevant_customers{hypothesis_id}", response_model=RelevantCustomersList)
+@customer_profile_router.get("/relevant_customers{hypothesis_id}", response_model=RelevantIntervieweesList)
 async def get_relevant_customers(hypothesis_id: int, db: Session = Depends(get_db)):
     hypothesis = db.query(models.Hypotheses).filter(models.Hypotheses.id == hypothesis_id).first()
     return {

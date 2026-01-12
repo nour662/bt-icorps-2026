@@ -1,14 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from app.core.db.database import get_db
-from app.worker import evaluate_hypothesis_task # celery tasks that need to be called (will update as more celery tasks are created)
+from app.worker.hyp_evaluation import evaluate_hypothesis_task # celery tasks that need to be called (will update as more celery tasks are created)
 from app.schemas.hypothesis import HypothesisEvaluationRequest, HypothesisEvaluationResponse
 from sqlalchemy.orm import Session
 from celery.result import AsyncResult
-from app.models import Hypotheses
-
-
-
+from app import models
 
 
 evaluation_router = APIRouter(
@@ -35,7 +32,7 @@ async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = D
     task = evaluate_hypothesis_task.delay(
         hypothesis_id = hypothesis_addition.id,
         hypothesis = hypothesis_addition.hypothesis,
-        hypothesis_type = hypothesis_type
+        hypothesis_type = hypothesis_type,
     )
     return (
         {
