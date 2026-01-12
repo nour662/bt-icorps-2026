@@ -5,7 +5,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 from app.core.celery_app import celery_app
 
 from celery import Celery
-from app.core.database import SessionLocal, engine, Base
+from app.core.db.database import engine
+from app.core.db.base import Base
 from app.database.process_teams import process_team
 from app.database.process_interviews import process_interview
 from app.database.process_input_hypothesis import save_hypothesis

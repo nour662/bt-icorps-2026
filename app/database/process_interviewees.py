@@ -2,11 +2,11 @@ import os
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv #dotenv to read from env
 from sqlalchemy.orm import Session
-from app.models.customer_table import Customers
+from app.models.interviewee_table import Interviewee
 
 
 
-def save_(db: Session, 
+def save_interviewee(db: Session, 
           team_id: str, 
           name: str, 
           industry: str, 
@@ -15,7 +15,7 @@ def save_(db: Session,
           checked: bool = False):
 
     # creating database object
-    new_customer = Customers(
+    new_customer = Interviewee(
         team_id = team_id,
         customer_name = name,
         customer_industry = industry,

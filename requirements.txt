@@ -54,7 +54,11 @@ jmespath==1.0.1
 ############################
 SQLAlchemy==2.0.45
 psycopg2-binary==2.9.11
+psycopg[binary]==3.2.4     # The v3 driver required by langchain-postgres
+psycopg-pool==3.2.4        # Required for connection pooling
 pgvector==0.4.2
+alembic==1.13.1
+langchain-postgres==0.0.12
 
 ############################
 # LLM + RAG Orchestration (LangChain + OpenAI)

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
-from app.core.database import Base
+from app.core.db.base import Base
 
 class Interviews(Base):
     __tablename__ = "interviews"
@@ -16,6 +16,6 @@ class Interviews(Base):
     interviews_output = Column(Text) # store AI output
 
     # define relationships
-    team = relationship("Team", back_populates="hypotheses")
+    team = relationship("Team", back_populates="interviews")
     # cleanup, delete data in DocumentChunk table if interview is deleted
-    chunks = relationship("DocumentChunk", back_populates="interview", cascade="all, delete-orphan")
+    chunks = relationship("DocumentChunk", back_populates="interviews", cascade="all, delete-orphan")
