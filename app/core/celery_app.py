@@ -1,12 +1,10 @@
-import os
 from celery import Celery
-from dotenv import load_dotenv
+from app.core.config import settings
 
-load_dotenv()
 
 # obtains the Celery broker url from the .env file (if it is not there then defaults to the standard local Redis port for testing purposes)
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+CELERY_BROKER_URL = settings.CELERY_BROKER_URL
+CELERY_RESULT_BACKEND = settings.CELERY_RESULT_BACKEND
 
 # initializing Celery
 celery_app = Celery(
@@ -14,10 +12,7 @@ celery_app = Celery(
     broker=CELERY_BROKER_URL,
     backend=CELERY_RESULT_BACKEND,
     include=[
-        #"app.tasks.ingestion",
-        #"app.tasks.evaluation"
-        #"app.tasks.initialize_db",
-        #"tasks.testing"
+        "app.worker.hyp_evaluation"
     ]
 )
 
