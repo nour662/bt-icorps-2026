@@ -9,10 +9,6 @@ import tiktoken
 MAX_HYPOTHESIS_TOKENS = 3000 # set max value -> can change later
 
 def save_hypothesis(db: Session, team_id: str, hypothesis_input: str, h_type: str):
-    token_count = get_tokens(hypothesis_input)
-    if token_count > MAX_HYPOTHESIS_TOKENS:
-        print(f"Hypothesis is too long")
-        return False
     # vector = embed_hypothesis(hypothesis_input)
 
     # creating database object
@@ -35,11 +31,14 @@ def save_hypothesis(db: Session, team_id: str, hypothesis_input: str, h_type: st
 
 def embed_hypothesis(hypothesis_id:int, hypothesis_text:str):
     # check token size! OR request limit
-    
+    token_count = get_tokens(hypothesis_text)
+    if token_count > MAX_HYPOTHESIS_TOKENS:
+        print(f"Hypothesis is too long")
+        return False
+
     db = SessionLocal()
     
     try: 
-    
         # get both customer/ecosystem hypothesis
         embeddings_model = OpenAIEmbeddings(model="text-embedding-3-small")
 
