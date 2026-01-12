@@ -7,8 +7,6 @@ from operator import itemgetter
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.runnables import RunnablePassthrough 
 from langchain_core.output_parsers import StrOutputParser
-
-#Add this to requirements.txt: langchain-postgres
 from langchain_postgres import PGVector 
 from app.core.config import settings
 from app.systemprompts.hyp_evaluation_prompt import EVALUATION_PROMPT
@@ -16,6 +14,11 @@ from app.core.config import settings
 from database.process_input_hypothesis import embed_hypothesis
 from sqlalchemy.orm import Session
 from app.models.hypotheses_table import Hypotheses
+
+#needed for celery task
+from app.core.celery_app import celery_app
+from app.database.session import SessionLocal  # <--- Check what this path is and if we have it 
+from sqlalchemy.orm import Session
 
 # 1. The reason why we are embedding is because yes we are receving the vectors from the DB
 # But when you receive vectors they are just numbers. We need to embed the vectors inorder for 
@@ -26,7 +29,8 @@ embeddings = OpenAIEmbeddings(
 )
 
 # Create the DB connection URL but not sure if the .replace is needed or correct
-connection_url = str(settings.DATABASE_URL).replace("postgresql://", "postgresql+psycopg://")
+#Note: if "postgresql://" in connection_url and "psycopg" not in connection_url: connection_url = connection_url.replace("postgresql://", "postgresql+psycopg://")
+connection_url = str(settings.DATABASE_URL)
 
 # 2. Connect to the "hypothesis_rules" DB collection
 vector_store = PGVector(
@@ -59,20 +63,76 @@ rag_chain = (
     | StrOutputParser()
 )
 
+
+#celery route for tasks user_persona_rec_task
+# --- CELERY TASK ---
+#def evaluate_hypothesis_task(user_hypothesis: str):
+#    result = rag_chain.invoke(user_hypothesis)
+#    return result
+
 @celery_app.task(name="evaluate_hypothesis_task")
+def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesis_type: str,
+                        team_id: str, db: Session):
+    
+    #1. Opens a DB session.
+    #2. Runs the RAG chain.
+    #3. Saves result to Postgres.
+    
+    print(f" Worker check for Hypothesis ID: {hypothesis_id}")
+    
+    # A. OPEN DB SESSION (Manually) need to change variable names to whatever is in the db
+    db: Session = SessionLocal()
+    
+    try:
+        # B. RUN RAG CHAIN
+        # We pass the arguments directly into the chain
+        rag_input = {
+            "hypothesis": hypothesis_text,
+            "team_id": team_id,
+            "hypothesis_type": hypothesis_type
+        }
+        
+        # This performs the Vector Search + OpenAI Generation
+        ai_response = rag_chain.invoke(rag_input)
+        
+        # C. PARSE SCORE (Basic Logic)
+        score = 0
+        if "Score:" in ai_response:
+            try:
+                # Extracts the number after "Score:"
+                score_part = ai_response.split("Score:")[1].split("/")[0].strip()
+                score = int(score_part)
+            except ValueError:
+                score = 0 # Default if parsing fails
 
-def evaluate_hypothesis_task(hypothesis_id:int, hypothesis:str, hypothesis_type: str, 
-db: Session):
-    # if ecosystem, evaluate with PGVector
-    hypothesis_embedding = embed_hypothesis(hypothesis)
+        # D. UPDATE DATABASE
+        # Fetch the row we created in the API
 
+        #FIND THESE ROW NAMES AND MAKE SURE THEY MATCH THE DB
+        record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
+        
+        if record:
+            record.ai_evaluation = ai_response  # Ensure your table has this column!
+            record.score = score                # Ensure your table has this column!
+            record.status = "COMPLETED"         # Critical for Frontend Polling
+            db.commit()
+            print(f"Success: Updated Hypothesis {hypothesis_id}")
+        else:
+            print(f"Error: Hypothesis ID {hypothesis_id} not found in DB.")
 
-        # RAG logic here - make sure to sort by ecosystem
-    # make OpenAI call - can define a request body baseed on the type r can make two separate calls
+    except Exception as e:
+        print(f"Worker Failed: {e}")
+        db.rollback()
+        # Update status to FAILED so frontend doesn't hang
 
-    # store results in the output and score section of the hypothesis table
-    # return 
+        #Find THESE ROW NAMES AND MAKE SURE THEY MATCH THE DB
+        record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
+        if record:
+            record.status = "FAILED"
+            db.commit()
+            
+    finally:
+        # E. CLOSE DB SESSION
+        db.close()
 
-
-    #after you finish the openai call, set the score in the results variable 
-    #This is in the hypothesis output and score 
+    return "Evaluation Task Finished" 
