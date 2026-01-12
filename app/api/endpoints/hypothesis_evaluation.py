@@ -44,7 +44,7 @@ async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = D
     )
 
 # route to check on the status of the hypothesis evaluation in celery
-@evaluation_router.get("/status{task_id}")
+@evaluation_router.get("/status/{task_id}")
 async def get_status(task_id : str):
     result = AsyncResult(task_id)
     return {
