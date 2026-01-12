@@ -2,12 +2,24 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.core.db.database import engine, get_db
-# from app.core.db.base import Base
+
+# importing routes
+from app.api.endpoints.teams import router as teams_router
+from app.api.endpoints.hypothesis_evaluation import router as hypothesis_router 
+from app.api.endpoints.customer_profile import router as interviewee_router 
+
+
+
 # from app.storage.init import ensure_bucket_exists
 import redis
 import os
 
 app = FastAPI(title="Interview Info App API")
+
+# defining all routes in main
+app.include_router(teams_router)
+app.include_router(hypothesis_router)
+app.include_router(interviewee_router)
 
 with engine.connect() as conn:
     # if the database does not already have the capability, adds the app that allows for vector computation abilities

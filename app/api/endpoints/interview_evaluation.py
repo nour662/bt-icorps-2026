@@ -24,10 +24,13 @@ async def upload_file(file: UploadFile = File()):
             status_code=400,
             detail="Invalid file type"
         )
+    return {
+        "message" : "testing"
+    }
 
 
 
 
 
 
-@interview_evaluation_router.post("/evaluate_interview")
+#@interview_evaluation_router.post("/evaluate_interview")

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.core.database import get_db
+from app.core.db.database import get_db
 from app import models
 from app.tasks import evaluate_interviews
 from app.schemas.team import NewTeam
@@ -33,15 +33,17 @@ async def authenticate_team(team_id: str, password: str, db: Session = Depends(g
 async def create_team(data: NewTeam, db: Session = Depends(get_db)):
     team = models.Team(
         id = data.team_id,
-        name = data.name,
-        industry = data.industry
+        name = data.team_name,
+        industry = data.industry,
         password_hash=hash_password(data.password)
     )
     db.add(team)
     db.commit()
     return {
-        "message" = "Team created successfully"
+        "message" : "Team created successfully",
         "status" : 200
     }
+
+
         
 

@@ -17,13 +17,11 @@ evaluation_router = APIRouter(
 
 @evaluation_router.post("/evaluate")
 async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = Depends(get_db)):
-    # get team_id based on a token
-    team_id = data.team_id
+    team_id = data.team_id # will later be decoded using a token
     hypothesis_type = data.hypothesis_type
     hypothesis = data.hypothesis
     
-    
-     # adding the hypothesis to the database
+    # adding the hypothesis to the database
 
     hypothesis_addition = models.Hypotheses(
         team_id = team_id,
