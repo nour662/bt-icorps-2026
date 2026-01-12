@@ -23,6 +23,6 @@ class PastData(Base):
     hypotheses_output_score = Column(Integer)
     
     
-    team = relationship("Team", back_populates="past_data")
+    # team = relationship("Team", back_populates="past_data")
     chunks = relationship("DocumentChunk", back_populates="interviews", cascade="all, delete-orphan")
 

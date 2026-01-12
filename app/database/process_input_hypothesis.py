@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from app.models.hypotheses_table import Hypotheses
 
 
-
 def save_hypothesis(db: Session, team_id: str, hypothesis_input: str, h_type: str):
     vector = embed_hypothesis(hypothesis_input)
 
@@ -27,13 +26,13 @@ def save_hypothesis(db: Session, team_id: str, hypothesis_input: str, h_type: st
         db.rollback()
         print(f"Error: {e}")
 
-def embed_hypothesis():
+def embed_hypothesis(db: Session, hypothesis_input:str, hypothesis_id:int, hypothesis_embedding:str):
     # check token size! OR request limit
     
     # get both customer/ecosystem hypothesis
     embeddings_model = OpenAIEmbeddings(model="text-embedding-3-small")
 
-    hypothesis_vector = embeddings_model.embed_query(input_hypothesis) # embed hypothesis inputted by user
+    hypothesis_vector = embeddings_model.embed_query(hypothesis_input) # embed hypothesis inputted by user
     
     # add into table
         # set embeddings here!

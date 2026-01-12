@@ -18,3 +18,4 @@ class Hypotheses(Base):
     hypothesis_embedding = Column(Vector(1536)) # embedding of hypotheses for future comparison
     
     team = relationship("Team", back_populates="hypotheses")
+    ai_interviewees = relationship("AI_Interviewees", back_populates="hypotheses")

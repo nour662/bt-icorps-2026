@@ -8,10 +8,12 @@ class DocumentChunk(Base):
     id = Column(Integer, primary_key=True)
     team_id = Column(String, ForeignKey("teams.id")) # foreign key
     interview_id = Column(Integer, ForeignKey("interviews.id"))
+    past_data_id = Column(Integer, ForeignKey("past_data.id"))
+
 
     s3_key = Column(String) # s3 key for file access
     content = Column(Text)
     embedding = Column(Vector(1536)) 
 
     # python syntax, create direct connection to Interview class
-    interviews = relationship("Interview", back_populates="chunks") 
+    interviews = relationship("Interviews", back_populates="chunks") 

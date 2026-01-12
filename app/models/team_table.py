@@ -19,10 +19,10 @@ class Team(Base):
     # marketability = Column(Text)
     # ip_status = Column(Text)
     status = Column(String)
-    passcode = Column(String)
 
     # provide link to other tables
-    hypotheses = relationship("Hypothesis", back_populates="team") # sync to hypotheses
-    customers = relationship("Customers", back_populates="team") # sync to interviews
-    interviews = relationship("Interview", back_populates="team") # sync to customers
+    hypotheses = relationship("Hypotheses", back_populates="team") # sync to hypotheses
+    interviewees = relationship("Interviewees", back_populates="team") # sync to interviews
+    interviews = relationship("Interviews", back_populates="team") # sync to customers
+    ai_interviewees = relationship("AI_Interviewees", back_populates="team")
 
