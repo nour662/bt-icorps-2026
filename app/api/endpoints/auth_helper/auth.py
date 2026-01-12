@@ -23,5 +23,6 @@ def decode_access_token(token):
         team_id = payload.get("sub")
         if not team_id:
             raise ValueError("Missing sub")
+        return team_id
     except (JWTError, ValueError):
         raise

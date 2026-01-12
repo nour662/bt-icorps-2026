@@ -18,9 +18,19 @@ from app.models.hypotheses_table import Hypotheses
 
 @celery_app.task(name="evaluate_hypothesis_task")
 
-def evaluate_hypothesis_task(hypothesis_id:int, hypothesis:str, db: Session):
+def evaluate_hypothesis_task(hypothesis_id:int, hypothesis:str, hypothesis_type: str, 
+db: Session):
     # if ecosystem, evaluate with PGVector
-    hypothesis_embedding = embed_hypothesis(hypothesis)
+    hypothesis_embedding = embed_hypothesis(hypothesis_hypothesis)
+    if (hypothesis_type == "Customer"):
+        # RAG logic here - make sure to sort by ecosystem
+    # make OpenAI call - can define a request body baseed on the type r can make two separate calls
+
+    # store results in the output and score section of the hypothesis table
+    # return
+    
+    
+
 
 
 
