@@ -17,7 +17,7 @@ from app.models.hypotheses_table import Hypotheses
 
 #needed for celery task
 from app.core.celery_app import celery_app
-from app.core.db.database import SessionLocal  # <--- Check what this path is and if we have it 
+from app.core.db.database import SessionLocal  
 from sqlalchemy.orm import Session
 
 # This embedds the celery task that contains inputs such as the 
@@ -76,8 +76,7 @@ def format_docs(docs):
 #    return result
 
 @celery_app.task(name="evaluate_hypothesis_task", bind=True)
-def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):
-    
+def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):    
     #1. Opens a DB session.
     #2. Runs the RAG chain.
     #3. Saves result to Postgres.
