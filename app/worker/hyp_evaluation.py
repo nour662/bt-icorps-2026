@@ -1,115 +1,64 @@
 import sys
 import os
+import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from app.core.celery_app import celery_app
 
-from operator import itemgetter
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+# from operator import itemgetter
+from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnablePassthrough 
 from langchain_core.output_parsers import StrOutputParser
 # from langchain_postgres import PGVector 
 from app.core.config import settings
 from app.systemprompts.hyp_evaluation_prompt import EVALUATION_PROMPT
-from app.core.config import settings
 from app.database.process_input_hypothesis import embed_hypothesis
 from sqlalchemy.orm import Session
+from app.core.db.database import SessionLocal
 from app.models.hypotheses_table import Hypotheses
+from app.models.team_table import Team
 
 #needed for celery task
 from app.core.celery_app import celery_app
-from app.core.db.database import SessionLocal  
-from sqlalchemy.orm import Session
+from app.worker.rag_functions import top_k_chunks, format_rows_for_prompt
 
 # This embedds the celery task that contains inputs such as the 
 # hypothesis text, team id, and hypothesis type
-embeddings = OpenAIEmbeddings(
-    api_key=settings.OPENAI_API_KEY, 
-    model="text-embedding-3-small"
-)
 
-
-# Create the DB connection URL but not sure if the .replace is needed or correct
-#Note: if "postgresql://" in connection_url and "psycopg" not in connection_url: connection_url = connection_url.replace("postgresql://", "postgresql+psycopg://")
-connection_url = str(settings.DATABASE_URL)
-
-# 2. Connect to the "hypothesis_rules" DB collection
-# vector_store = PGVector(
-#     embeddings=embeddings,
-#     collection_name="hypothesis_rules", ##does it need to be past_data_table?
-#     connection=connection_url,
-#     use_jsonb=True,
-# )
-
-# # 3. Create the Search Engine
-# retriever = vector_store.as_retriever(search_kwargs={"k": 4})
-
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
-
-# 4. Define the Chain
-# Input expected: { "hypothesis": "...", "team_id": "...", "type": "..." }
-# rag_chain = (
-#     {
-#         # SEARCH STEP: Take the hypothesis text, find matching rules in DB
-#         # itemgetter gets the hypothesis from the input of the celery task
-#         # Then we pass it to the retriever to get relevant docs from the vector DB
-#         "guidelines": itemgetter("hypothesis") | retriever | format_docs,
-        
-#         # PASSTHROUGH: Pass the raw data to the prompt
-#         # The prompt will use these values to fill in the template
-#         "hypothesis": itemgetter("hypothesis"),
-#         "team_id": itemgetter("team_id"),
-#         "hypothesis_type": itemgetter("hypothesis_type")
-#     }
-#     | EVALUATION_PROMPT
-#     | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
-
-#     # OUTPUT PARSING STEP: Get the final text output and return as string
-#     | StrOutputParser()
-# )
-
-
-#celery route for tasks user_persona_rec_task
-# --- CELERY TASK ---
-#def evaluate_hypothesis_task(user_hypothesis: str):
-#    result = rag_chain.invoke(user_hypothesis)
-#    return result
 
 @celery_app.task(name="evaluate_hypothesis_task", bind=True)
 def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):    
-    #1. Opens a DB session.
-    #2. Runs the RAG chain.
-    #3. Saves result to Postgres.
+
     
     print(f" Worker check for Hypothesis ID: {hypothesis_id}")
     
-    # A. OPEN DB SESSION (Manually) need to change variable names to whatever is in the db
     db = SessionLocal()
-    
-    try:
-        # B. RUN RAG CHAIN
-        # We pass the arguments directly into the chain
-        #rag input is taking the the users hypothesis and then being passed into the rag chain
-        rag_input = {
-            "hypothesis": hypothesis_text,
-            "team_id": team_id,
-            "hypothesis_type": hypothesis_type
-        }
-        
-        # This performs the Vector Search + OpenAI Generation
-        ai_response = rag_chain.invoke(rag_input)
-        print("\n" + ai_response + "\n")
-        print(type(ai_response))
-        # C. PARSE SCORE (Basic Logic)
-        score = 0
-        if "Score:" in ai_response:
-            try:
-                # Extracts the number after "Score:"
-                score_part = ai_response.split("Score:")[1].split("/")[0].strip()
-                score = int(score_part)
-            except ValueError:
-                score = 0 # Default if parsing fails
+    embedding = embed_hypothesis(hypothesis_id, hypothesis_text, db)
+    results = top_k_chunks(db, embedding, 5 , "Past Data")
 
+    llm = ChatOpenAI(
+       model="gpt-4o", 
+       api_key=settings.OPENAI_API_KEY,
+       base_url=settings.OPENAI_BASE_URL
+    )
+    guidelines_context = format_rows_for_prompt(results)
+
+    team = db.query(Team).filter(Team.id == team_id).first()
+
+
+    try:
+        prompt_inputs = {
+        "guidelines" : guidelines_context,
+        "hypothesis" : hypothesis_text,
+        "hypothesis_type" : hypothesis_type,
+        "team_id" : team_id,
+        "industry" : team.industry
+        }
+        prompt = EVALUATION_PROMPT.format_messages(**prompt_inputs)
+        response = llm.invoke(prompt)
+        response = response.content
+        response_json = json.loads(response)
+        score = response_json["score"]
+        ai_response = response_json["output"]
         # D. UPDATE DATABASE
         # Fetch the row we created in the API
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
@@ -129,9 +78,6 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
         db.rollback()
         # Update status to FAILED so frontend doesn't hang
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
-        # if record:
-        #     record.status = "FAILED"
-        #     db.commit()
             
     finally:
         # E. CLOSE DB SESSION

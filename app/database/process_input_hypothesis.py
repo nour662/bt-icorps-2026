@@ -29,14 +29,14 @@ def save_hypothesis(db: Session, team_id: str, hypothesis_input: str, h_type: st
         db.rollback()
         print(f"Error: {e}")
 
-def embed_hypothesis(hypothesis_id:int, hypothesis_text:str):
+def embed_hypothesis(hypothesis_id:int, hypothesis_text:str, db: Session):
     # check token size! OR request limit
     token_count = get_tokens(hypothesis_text)
     if token_count > MAX_HYPOTHESIS_TOKENS:
         print(f"Hypothesis is too long")
         return False
 
-    db = SessionLocal()
+    # db = SessionLocal()
     
     try: 
         # get both customer/ecosystem hypothesis
@@ -51,7 +51,6 @@ def embed_hypothesis(hypothesis_id:int, hypothesis_text:str):
     
         if hypo:
             hypo.embedding = vector
-            hypo.evaluated = True
             db.commit()
     except Exception as e:
         db.rollback()

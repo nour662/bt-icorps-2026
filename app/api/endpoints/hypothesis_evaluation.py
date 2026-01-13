@@ -59,12 +59,12 @@ async def get_hypothesis_results(hypothesis_id: int, db: Session = Depends(get_d
         print("\napi success\n")
     else:
         raise HTTPException(
-                status=404,
+                status_code=404,
                 detail= "hypothesis DNE"
         )
     if (hypothesis.hypotheses_output == None):
         raise HTTPException(
-                status=202,
+                status_code=202,
                 detail= "results not found"
         )
     # the output and score will need to be set in the celery route
