@@ -5,5 +5,4 @@ __pycache__/
 .DS_Store
 postgres_data/
 pgdata/
-storage/
 minio_data/
