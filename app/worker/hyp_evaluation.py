@@ -20,13 +20,13 @@ from app.core.celery_app import celery_app
 from app.core.db.database import SessionLocal  # <--- Check what this path is and if we have it 
 from sqlalchemy.orm import Session
 
-# 1. The reason why we are embedding is because yes we are receving the vectors from the DB
-# But when you receive vectors they are just numbers. We need to embed the vectors inorder for 
-# the LLM to understand them and use them for searching and matching.
+# This embedds the celery task that contains inputs such as the 
+# hypothesis text, team id, and hypothesis type
 embeddings = OpenAIEmbeddings(
     api_key=settings.OPENAI_API_KEY, 
     model="text-embedding-3-small"
 )
+
 
 # Create the DB connection URL but not sure if the .replace is needed or correct
 #Note: if "postgresql://" in connection_url and "psycopg" not in connection_url: connection_url = connection_url.replace("postgresql://", "postgresql+psycopg://")
@@ -35,7 +35,7 @@ connection_url = str(settings.DATABASE_URL)
 # 2. Connect to the "hypothesis_rules" DB collection
 vector_store = PGVector(
     embeddings=embeddings,
-    collection_name="hypothesis_rules", #Match the name of the table in the DB
+    collection_name="hypothesis_rules", ##does it need to be past_data_table?
     connection=connection_url,
     use_jsonb=True,
 )
@@ -51,15 +51,20 @@ def format_docs(docs):
 rag_chain = (
     {
         # SEARCH STEP: Take the hypothesis text, find matching rules in DB
+        # itemgetter gets the hypothesis from the input of the celery task
+        # Then we pass it to the retriever to get relevant docs from the vector DB
         "guidelines": itemgetter("hypothesis") | retriever | format_docs,
         
         # PASSTHROUGH: Pass the raw data to the prompt
+        # The prompt will use these values to fill in the template
         "hypothesis": itemgetter("hypothesis"),
         "team_id": itemgetter("team_id"),
         "hypothesis_type": itemgetter("hypothesis_type")
     }
     | EVALUATION_PROMPT
     | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
+
+    # OUTPUT PARSING STEP: Get the final text output and return as string
     | StrOutputParser()
 )
 
@@ -85,6 +90,7 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
     try:
         # B. RUN RAG CHAIN
         # We pass the arguments directly into the chain
+        #rag input is taking the the users hypothesis and then being passed into the rag chain
         rag_input = {
             "hypothesis": hypothesis_text,
             "team_id": team_id,
@@ -107,8 +113,6 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
 
         # D. UPDATE DATABASE
         # Fetch the row we created in the API
-
-        #FIND THESE ROW NAMES AND MAKE SURE THEY MATCH THE DB
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
         
         if record:
@@ -125,8 +129,6 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
         print(f"Worker Failed: {e}")
         db.rollback()
         # Update status to FAILED so frontend doesn't hang
-
-        #Find THESE ROW NAMES AND MAKE SURE THEY MATCH THE DB
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
         # if record:
         #     record.status = "FAILED"

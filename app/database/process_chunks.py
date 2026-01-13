@@ -6,9 +6,8 @@ from sqlalchemy.orm import Session
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from app.models.document_chunk_table import DocumentChunk 
 
-def process_chunks(db: Session, interview_id: int):
+def process_chunks(db: Session, interview_id: int, key: str):
     file = "src/test_file/Chat w_ Bobby.docx.pdf" # hardcode file to test :P
-    #interview_id = 2
 
     all_chunks = process_file_to_chunks(file)
     all_vectors = process_chunks_to_vectors(all_chunks)
@@ -19,11 +18,10 @@ def process_chunks(db: Session, interview_id: int):
         obj = DocumentChunk(
             content=chunk.page_content,
             embedding=vector,       
-            # interview_id=interview_id,
+            interview_id=interview_id,
             s3_key=None
         )
         chunk_objects.append(obj)
-
 
     # save to database
     try:
@@ -34,19 +32,6 @@ def process_chunks(db: Session, interview_id: int):
         # error checking
         db.rollback() # if error, remove all chunks added to database
         print(f"Error: {e}")
-
-if __name__ == "__main__":
-    # main for testing, print output to see if working
-    print("--- STEP 1: Main block reached ---", flush=True)
-    try:
-        from app.core.db.database import SessionLocal
-        db = SessionLocal()
-        print("--- STEP 2: DB Session created ---", flush=True)
-        process_chunks(db, interview_id=1)
-    except Exception as e:
-        print(f"CRITICAL ERROR: {e}", flush=True)
-    db = SessionLocal()
-
 
 def process_file_to_chunks(file):
     # compatibility with various file types
