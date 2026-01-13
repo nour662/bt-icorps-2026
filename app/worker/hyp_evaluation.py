@@ -21,21 +21,9 @@ from app.models.team_table import Team
 from app.core.celery_app import celery_app
 from app.worker.rag_functions import top_k_chunks, format_rows_for_prompt
 
+# This embedds the celery task that contains inputs such as the 
+# hypothesis text, team id, and hypothesis type
 
-# Create the DB connection URL but not sure if the .replace is needed or correct
-#Note: if "postgresql://" in connection_url and "psycopg" not in connection_url: connection_url = connection_url.replace("postgresql://", "postgresql+psycopg://")
-connection_url = str(settings.DATABASE_URL)
-
-
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
-
-
-#celery route for tasks user_persona_rec_task
-# --- CELERY TASK ---
-#def evaluate_hypothesis_task(user_hypothesis: str):
-#    result = rag_chain.invoke(user_hypothesis)
-#    return result
 
 @celery_app.task(name="evaluate_hypothesis_task", bind=True)
 def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):    
