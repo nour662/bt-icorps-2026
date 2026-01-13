@@ -15,11 +15,13 @@ from app.core.config import settings
 from app.database.process_input_hypothesis import embed_hypothesis
 from sqlalchemy.orm import Session
 from app.models.hypotheses_table import Hypotheses
+from app.core.db.database import SessionLocal
 
 @celery_app.task(name="evaluate_interviewee_profile", bind=True)
 
 def evaluate_interviewee_profile(self, hypothesis_id:int, hypothesis:str, hypothesis_type: str):
     db = SessionLocal()
+    
     ai_response = """
         [
             {
@@ -49,6 +51,8 @@ def evaluate_interviewee_profile(self, hypothesis_id:int, hypothesis:str, hypoth
     
     
     # need to pass in the hypothesis text here
+    prompt=""
+    
     
 
 
