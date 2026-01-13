@@ -12,7 +12,7 @@ celery_app = Celery(
     broker=CELERY_BROKER_URL,
     backend=CELERY_RESULT_BACKEND,
     include=[
-        "app.worker.hyp_evaluation",
+        #"app.worker.hyp_evaluation",
         "app.worker.user_interviewee_evaluation"
     ]
 )

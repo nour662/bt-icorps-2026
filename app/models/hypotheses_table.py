@@ -10,7 +10,7 @@ class Hypotheses(Base):
     hypothesis_type = Column(String)
     hypothesis = Column(Text)
     
-    evalulated = Column(Boolean, default=False)
+    evaluated = Column(Boolean, default=False)
     
     hypotheses_output = Column(Text) # store AI output
     hypotheses_output_score = Column(Integer)

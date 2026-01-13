@@ -10,11 +10,12 @@ from app.models.interviewees_table import Interviewees
 from app.models.hypotheses_table import Hypotheses
 from sqlalchemy import text
 from app.core.config import settings
+from app.systemprompts.user_persona_evaluation_prompt import USER_PERSONA_EVALUATION_PROMPT
 
 client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
 @celery_app.task(name="evaluate_interviewee_task", bind=True)
-def evaluate_interviewee_task(self, interviewee_id: int):
+def evaluate_interviewee_task(self, interviewee_id: int, hypothesis_text: str):
     db = SessionLocal()
     
     try:
@@ -22,29 +23,12 @@ def evaluate_interviewee_task(self, interviewee_id: int):
         if not interviewee:
             print(f"This person does not exist")
             return
-        # insert searching past database here
-        
+        # insert searching past database here??
         # ai evaluation 
         guidelines = "none for now" # insert once we figure out logic
         
-        prompt = f"""
+        prompt = USER_PERSONA_EVALUATION_PROMPT
         
-        Evaluation Guidelines:
-        {guidelines}
-
-        Interviewee Profile:
-        Name: {interviewee.customer_name}
-        Occupation: {interviewee.customer_occupation}
-        Industry: {interviewee.customer_industry}
-        Experience/Input: {interviewee.customer_experience}
-
-        Task: Analyze if this interview provides high-quality data for an I-Corps hypothesis.
-        Return ONLY a JSON object:
-        {{
-            "analysis": "A 2-3 sentence summary of the validation or insights gained.",
-            "score": 0-5 (Integer: How valuable/relevant was this interview?)
-        }}
-        """
         # idk if this is right :C
         ai_call = client.chat.completions.create(
             model="gpt-4o-mini",

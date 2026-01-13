@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from enum import Enum
 from typing import List, Optional
 
@@ -17,22 +17,22 @@ class IntervieweeBase(BaseModel):
 
 # 2. Used for the POST /check_persona request
 class IntervieweeEvaluationBase(IntervieweeBase):
-    team_id: str
+    #team_id: str
     hypothesis_id: int
     name: str
+    interviewee_bio: str
 
 # 3. Used for the GET /results/{id} response
 # This matches your Interviewees table columns exactly
 class IntervieweeEvaluationResponse(IntervieweeBase):
     id: int
-    team_id: str
-    customer_name: str
+    customer_name: str          # Matches DB
     customer_checked: bool
     customers_output: Optional[str] = None
-    customers_output_score: Optional[int] = Field(None, ge=0, le=100)
+    customers_output_score: Optional[int] = None
 
     class Config:
-        from_attributes = True # Allows SQLAlchemy objects to be converted to Pydantic
+        from_attributes = True # This is still required to read DB objects
 
 # 4. Used for the GET /relevant_customers response
 class RelevantIntervieweesList(BaseModel):

@@ -30,13 +30,13 @@ async def check_persona(data: IntervieweeEvaluationBase, db: Session = Depends(g
     if not hypo:
         raise HTTPException(status_code=404, detail="Hypothesis not found.")
     
-    if not hypo.evalulated: # Matching your spelling 'evalulated'
-        raise HTTPException(status_code=400, detail="Please evaluate your hypothesis first.")
+    # if not hypo.evaluated: 
+    #     raise HTTPException(status_code=400, detail="Please evaluate your hypothesis first.")
 
     # 3. Save the Interviewee "Persona"
     new_interviewee = Interviewees(
         team_id = data.team_id,
-        customer_name = data.name,
+        customer_name = data.name, # Maps 'name' from JSON to 'customer_name' in DB
         customer_industry = data.industry,
         customer_occupation = data.occupation,
         customer_experience = data.experience_level,
@@ -74,7 +74,17 @@ async def get_results(interviewee_id: int, db: Session = Depends(get_db)):
     if interviewee.customers_output is None:
         raise HTTPException(status_code=202, detail="Results are still being generated")
         
-    return interviewee
+    return {
+        "id": interviewee.id,
+        "team_id": interviewee.team_id,
+        "customer_name": interviewee.customer_name,
+        "industry": interviewee.customer_industry,    
+        "occupation": interviewee.customer_occupation, 
+        "experience_level": interviewee.customer_experience, 
+        "customer_checked": interviewee.customer_checked,
+        "customers_output": interviewee.customers_output,
+        "customers_output_score": interviewee.customers_output_score
+    }
 
 @interviewee_router.get("/relevant_interviewees/{hypothesis_id}", response_model=RelevantIntervieweesList)
 async def get_relevant_customers(hypothesis_id: int, db: Session = Depends(get_db)):
