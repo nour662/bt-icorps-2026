@@ -21,6 +21,10 @@ from app.models.team_table import Team
 from app.core.celery_app import celery_app
 from app.worker.rag_functions import top_k_chunks, format_rows_for_prompt
 
+# This embedds the celery task that contains inputs such as the 
+# hypothesis text, team id, and hypothesis type
+
+
 @celery_app.task(name="evaluate_hypothesis_task", bind=True)
 def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):    
 
