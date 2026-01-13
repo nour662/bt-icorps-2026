@@ -1,33 +1,31 @@
 import sys
 import os
+import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from app.core.celery_app import celery_app
 
-from operator import itemgetter
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+# from operator import itemgetter
+from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnablePassthrough 
 from langchain_core.output_parsers import StrOutputParser
 # from langchain_postgres import PGVector 
 from app.core.config import settings
 from app.systemprompts.hyp_evaluation_prompt import EVALUATION_PROMPT
-from app.core.config import settings
 from app.database.process_input_hypothesis import embed_hypothesis
 from sqlalchemy.orm import Session
+from app.core.db.database import SessionLocal
 from app.models.hypotheses_table import Hypotheses
+from app.models.team_table import Team
 
 #needed for celery task
 from app.core.celery_app import celery_app
-from app.core.db.database import SessionLocal  
-from sqlalchemy.orm import Session
+from app.worker.rag_functions import top_k_chunks, format_rows_for_prompt
 
 # This embedds the celery task that contains inputs such as the 
 # hypothesis text, team id, and hypothesis type
-embeddings = OpenAIEmbeddings(
-    api_key=settings.OPENAI_API_KEY, 
-    model="text-embedding-3-small"
-)
 
 
+<<<<<<< HEAD
 # Create the DB connection URL but not sure if the .replace is needed or correct
 #Note: if "postgresql://" in connection_url and "psycopg" not in connection_url: connection_url = connection_url.replace("postgresql://", "postgresql+psycopg://")
 connection_url = str(settings.DATABASE_URL)
@@ -86,41 +84,42 @@ def format_docs(docs):
 #    result = rag_chain.invoke(user_hypothesis)
 #    return result
 
+=======
+>>>>>>> 9093100d9dc490c784263d4d777ebcbadea4c9fa
 @celery_app.task(name="evaluate_hypothesis_task", bind=True)
 def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):    
-    #1. Opens a DB session.
-    #2. Runs the RAG chain.
-    #3. Saves result to Postgres.
+
     
     print(f" Worker check for Hypothesis ID: {hypothesis_id}")
     
-    # A. OPEN DB SESSION (Manually) need to change variable names to whatever is in the db
     db = SessionLocal()
-    
-    try:
-        # B. RUN RAG CHAIN
-        # We pass the arguments directly into the chain
-        #rag input is taking the the users hypothesis and then being passed into the rag chain
-        rag_input = {
-            "hypothesis": hypothesis_text,
-            "team_id": team_id,
-            "hypothesis_type": hypothesis_type
-        }
-        
-        # This performs the Vector Search + OpenAI Generation
-        ai_response = rag_chain.invoke(rag_input)
-        print("\n" + ai_response + "\n")
-        print(type(ai_response))
-        # C. PARSE SCORE (Basic Logic)
-        score = 0
-        if "Score:" in ai_response:
-            try:
-                # Extracts the number after "Score:"
-                score_part = ai_response.split("Score:")[1].split("/")[0].strip()
-                score = int(score_part)
-            except ValueError:
-                score = 0 # Default if parsing fails
+    embedding = embed_hypothesis(hypothesis_id, hypothesis_text, db)
+    results = top_k_chunks(db, embedding, 5 , "Past Data")
 
+    llm = ChatOpenAI(
+       model="gpt-4o", 
+       api_key=settings.OPENAI_API_KEY,
+       base_url=settings.OPENAI_BASE_URL
+    )
+    guidelines_context = format_rows_for_prompt(results)
+
+    team = db.query(Team).filter(Team.id == team_id).first()
+
+
+    try:
+        prompt_inputs = {
+        "guidelines" : guidelines_context,
+        "hypothesis" : hypothesis_text,
+        "hypothesis_type" : hypothesis_type,
+        "team_id" : team_id,
+        "industry" : team.industry
+        }
+        prompt = EVALUATION_PROMPT.format_messages(**prompt_inputs)
+        response = llm.invoke(prompt)
+        response = response.content
+        response_json = json.loads(response)
+        score = response_json["score"]
+        ai_response = response_json["output"]
         # D. UPDATE DATABASE
         # Fetch the row we created in the API
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
@@ -140,9 +139,6 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
         db.rollback()
         # Update status to FAILED so frontend doesn't hang
         record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
-        # if record:
-        #     record.status = "FAILED"
-        #     db.commit()
             
     finally:
         # E. CLOSE DB SESSION
