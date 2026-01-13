@@ -6,22 +6,21 @@ from app.core.db.database import get_db
 from app.models.interviewees_table import Interviewees # Your specific model
 from app.models.hypotheses_table import Hypotheses
 from app.models.team_table import Team
-from app.worker.interviewee_evaluation import evaluate_interviewee_task # Updated task name
-from app.schemas.interviewees import IntervieweeEvaluationBase, IntervieweeResponse, RelevantIntervieweesList
+from app.worker.interviewee_evaluation import evaluate_interviewee_profile # Updated task name
+from app.schemas.interviewees import IntervieweeEvaluationBase, IntervieweeEvaluationResponse, RelevantIntervieweesList
 
 interviewee_router = APIRouter(
     prefix="/interviewee", tags=["Interviewee"]
 )
 
-@interviewee_router.post("/check_persona", status_code=201)
-async def check_persona(data: IntervieweeCreate, db: Session = Depends(get_db)):
+@interviewee_router.post("/check_persona")
+async def check_persona(data: IntervieweeEvaluationBase, db: Session = Depends(get_db)):
     # 1. Validation: Does the team exist?
-    team = db.query(Team).filter(Team.id == data.team_id).first()
-    if not team:
-        raise HTTPException(status_code=404, detail="Team not found.")
+    # team = db.query(Team).filter(Team.id == data.team_id).first()
+    # if not team:
+    #     raise HTTPException(status_code=404, detail="Team not found.")
 
     # 2. Validation: Find the specific hypothesis and check evaluation status
-    # FIX: SQLAlchemy filter needs comma or .filter() chain, not 'and'
     hypo = db.query(Hypotheses).filter(
         Hypotheses.team_id == data.team_id, 
         Hypotheses.hypothesis == data.hypothesis
@@ -64,7 +63,7 @@ async def get_status(task_id: str):
     result = AsyncResult(task_id)
     return {"task_id": task_id, "status": result.status}
 
-@interviewee_router.get("/results/{interviewee_id}", response_model=IntervieweeResponse)
+@interviewee_router.get("/results/{interviewee_id}", response_model=IntervieweeEvaluationResponse)
 async def get_results(interviewee_id: int, db: Session = Depends(get_db)):
     interviewee = db.query(Interviewees).filter(Interviewees.id == interviewee_id).first()
     
@@ -75,3 +74,10 @@ async def get_results(interviewee_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=202, detail="Results are still being generated")
         
     return interviewee
+
+@interviewee_router.get("/relevant_interviewees/{hypothesis_id}", response_model=RelevantIntervieweesList)
+async def get_relevant_customers(hypothesis_id: int, db: Session = Depends(get_db)):
+    hypothesis = db.query(models.Hypotheses).filter(models.Hypotheses.id == hypothesis_id).first()
+    return {
+        relevant_customers : hypothesis.suggested_customer_profiles
+    }

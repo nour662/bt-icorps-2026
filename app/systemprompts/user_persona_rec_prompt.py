@@ -28,17 +28,15 @@ Assign Hypotheses: For each archetype, pinpoint exactly which assumption their i
 Format Output: Present the recommendations in the strict format defined below.
 Mandatory Output Format
 
-Do not use conversational filler. Output the recommendations as a structured list. Each recommendation must include exactly these fields:
-[Archetype Name/Title]
-Company Type: [e.g., Enterprise SaaS, Regional Hospital, Boutique Firm]
-Market Segment: [Specific segment, e.g., North American Logistics]
-Industry: [Standard Industry Classification, e.g., Supply Chain Management]
-Position: [Job Title]
-Role: [Select one: End User, Decision Maker, Influencer, Economic Buyer, Gatekeeper, Saboteur]
-Recommended Reach-Out Methods: [Specific tactics for this persona]
-Suggested Interview Timing: [e.g., Early Discovery, Mid-Validation, Pivot-Check]
-Primary Interview Goals: [What knowledge is sought, e.g., "Understand current workflow friction"]
-Primary Interview Hypothesis: [The specific assumption being tested, e.g., "Users prioritize speed over accuracy"]
+Do not use conversational filler. Output the recommendations as a structured list of JSON objects. Each recommendation must include exactly these fields in this JSON format:
+{
+    "Company Type" : [e.g., Enterprise SaaS, Regional Hospital, Boutique Firm],
+    "Market Segment": [Specific segment, e.g., North American Logistics],
+    "Industry" : [Standard Industry Classification, e.g., Supply Chain Management],
+    "Position" : [Job Title],
+    "Role" : [Select one: End User, Decision Maker, Influencer, Economic Buyer, Gatekeeper, Saboteur],
+    "Recommended Outreach Methods" : [Specific tactics for this persona],
+}
 
 Repeat this block for every recommended persona.
 

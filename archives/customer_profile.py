@@ -15,18 +15,18 @@ async def check_persona(data: IntervieweeEvaluationBase, db: Session = Depends(g
     hypothesis = data.hypothesis
     team = db.query(models.Team).filter(models.Team.id == team_id).first()      # finds the team with the given id (uses ORM to increase compatibility with FastAPI and prevent SQL injections)
 
-    if not team:                                                                # checks if the team is in the database
-        raise HTTPException(
-            status=404, 
-            detail="Team not found. Please upload your hypothesis to begin"
-        )
+    # if not team:                                                                # checks if the team is in the database
+    #     raise HTTPException(
+    #         status=404, 
+    #         detail="Team not found. Please upload your hypothesis to begin"
+    #     )
 
     hypothesis = db.query(models.Hypotheses).filter(model.Hypotheses.team_id == team_id and models.Hypotheses.hypothesis == hypothesis).first()
-    if (hypothesis.evaluated == False):                                         # check to make sure teams have evaluated their hypothesis (so that they are not trying to find customers for a faulty hypothesis)
-        raise HTTPException(
-            status=404,
-            detail="Please evaluate your hypothesis first"
-        )
+    # if (hypothesis.evaluated == False):                                         # check to make sure teams have evaluated their hypothesis (so that they are not trying to find customers for a faulty hypothesis)
+    #     raise HTTPException(
+    #         status=404,
+    #         detail="Please evaluate your hypothesis first"
+    #     )
     # creating the persona and adding them to the customer profiles database: 
     new_customer_profile = models.Interviewee(
         customer_name = data.name,
