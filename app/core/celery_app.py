@@ -23,5 +23,5 @@ celery_app.conf.update(
     accept_content=["json"],
     result_serializer="json",
     timezone="UTC",
-    imports=["app.tasks"]
+    # imports=["app.tasks"]  # Commented out to prevent importing PGVector dependencies during migrations
 )

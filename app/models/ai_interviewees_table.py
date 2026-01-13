@@ -6,13 +6,15 @@ from app.core.db.base import Base
 class AI_Interviewees(Base):
     __tablename__ = "ai_interviewees"
     id = Column(Integer, primary_key=True) # primary key
-    team_id = Column(String, ForeignKey("teams.id")) # foreign key, link a team with all generated personas
-    hypothesis_id = Column(String, ForeignKey("hypotheses.id")) # foreign key, link hypothesis to generated personal
-
-    ai_interviewee_name = Column(String) 
-    ai_interviewee_industry = Column(String) 
+    # team_id = Column(String, ForeignKey("teams.id")) # foreign key, link a team with all generated personas
+    hypothesis_id = Column(Integer, ForeignKey("hypotheses.id")) # foreign key, link hypothesis to generated personal
+    company_type = Column(String)
+    market_segment = Column(String)
+    industry = Column(String) 
+    poition = Column(String)
+    role = Column(String)
+    outreach_methods = Column(String)
     
-    ai_output = Column(Text) # store AI output
 
     # link back to parents
     # team = relationship("Team", back_populates="ai_interviewees")

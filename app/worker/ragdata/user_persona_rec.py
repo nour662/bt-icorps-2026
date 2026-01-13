@@ -8,7 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 #apparently this is the correct import path for vector store 
 # when using langchain but it might be sequal algemy not sure DOUBLE CHECK 
-from langchain_community.vectorstores import PGVector
+# from langchain_community.vectorstores import PGVector
 
 #importing settings and prompt template
 from app.core.config import settings
@@ -32,14 +32,14 @@ embeddings = OpenAIEmbeddings(
     api_key="The API Key for Embeddings here", model="text-embedding-3-small"
     )
 
-vector_store = PGVector.from_documents(
-    docs, embeddings,
+# vector_store = PGVector.from_documents(
+#     docs, embeddings,
 
-    #not sure if I need these last 2 parameters DOUBLE CHECK
-    collection_name="hypothesis_guidelines",
-    connection_string=settings.DATABASE_URL
-    )
-retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k":4})
+#     #not sure if I need these last 2 parameters DOUBLE CHECK
+#     collection_name="hypothesis_guidelines",
+#     connection_string=settings.DATABASE_URL
+#     )
+# retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k":4})
 
 # Step 4: Chaining Components Together
 
@@ -47,15 +47,15 @@ def format_docs(docs):
         return "\n\n".join(doc.page_content for doc in docs)
 
 # This combines the Retrieval + The Prompt from File 1 + The LLM
-rag_chain = (
-    {
-    "guidelines": retriever | format_docs, 
-    "hypothesis": RunnablePassthrough()     
-    }
-    | USER_PERSONA_REC_EVALUATION_PROMPT        # Uses the imported template
-    | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
-    | StrOutputParser()
-)
+# rag_chain = (
+#     {
+#     "guidelines": retriever | format_docs, 
+#     "hypothesis": RunnablePassthrough()     
+#     }
+#     | USER_PERSONA_REC_EVALUATION_PROMPT        # Uses the imported template
+#     | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
+#     | StrOutputParser()
+# )
 
 #celery route for tasks user_persona_rec_task
 # --- CELERY TASK ---

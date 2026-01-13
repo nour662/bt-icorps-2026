@@ -7,7 +7,7 @@ from operator import itemgetter
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.runnables import RunnablePassthrough 
 from langchain_core.output_parsers import StrOutputParser
-from langchain_postgres import PGVector 
+# from langchain_postgres import PGVector 
 from app.core.config import settings
 from app.systemprompts.hyp_evaluation_prompt import EVALUATION_PROMPT
 from app.core.config import settings
@@ -23,45 +23,45 @@ from sqlalchemy.orm import Session
 # 1. The reason why we are embedding is because yes we are receving the vectors from the DB
 # But when you receive vectors they are just numbers. We need to embed the vectors inorder for 
 # the LLM to understand them and use them for searching and matching.
-embeddings = OpenAIEmbeddings(
-    api_key=settings.OPENAI_API_KEY, 
-    model="text-embedding-3-small"
-)
+# embeddings = OpenAIEmbeddings(
+#     api_key=settings.OPENAI_API_KEY, 
+#     model="text-embedding-3-small"
+# )
 
 # Create the DB connection URL but not sure if the .replace is needed or correct
 #Note: if "postgresql://" in connection_url and "psycopg" not in connection_url: connection_url = connection_url.replace("postgresql://", "postgresql+psycopg://")
-connection_url = str(settings.DATABASE_URL)
+# connection_url = str(settings.DATABASE_URL)
 
 # 2. Connect to the "hypothesis_rules" DB collection
-vector_store = PGVector(
-    embeddings=embeddings,
-    collection_name="hypothesis_rules", #Match the name of the table in the DB
-    connection=connection_url,
-    use_jsonb=True,
-)
+# vector_store = PGVector(
+#     embeddings=embeddings,
+#     collection_name="hypothesis_rules", #Match the name of the table in the DB
+#     connection=connection_url,
+#     use_jsonb=True,
+# )
 
 # 3. Create the Search Engine
-retriever = vector_store.as_retriever(search_kwargs={"k": 4})
+# retriever = vector_store.as_retriever(search_kwargs={"k": 4})
 
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
+# def format_docs(docs):
+#     return "\n\n".join(doc.page_content for doc in docs)
 
 # 4. Define the Chain
 # Input expected: { "hypothesis": "...", "team_id": "...", "type": "..." }
-rag_chain = (
-    {
-        # SEARCH STEP: Take the hypothesis text, find matching rules in DB
-        "guidelines": itemgetter("hypothesis") | retriever | format_docs,
-        
-        # PASSTHROUGH: Pass the raw data to the prompt
-        "hypothesis": itemgetter("hypothesis"),
-        "team_id": itemgetter("team_id"),
-        "hypothesis_type": itemgetter("hypothesis_type")
-    }
-    | EVALUATION_PROMPT
-    | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
-    | StrOutputParser()
-)
+# rag_chain = (
+#     {
+#         # SEARCH STEP: Take the hypothesis text, find matching rules in DB
+#         "guidelines": itemgetter("hypothesis") | retriever | format_docs,
+#         
+#         # PASSTHROUGH: Pass the raw data to the prompt
+#         "hypothesis": itemgetter("hypothesis"),
+#         "team_id": itemgetter("team_id"),
+#         "hypothesis_type": itemgetter("hypothesis_type")
+#     }
+#     | EVALUATION_PROMPT
+#     | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
+#     | StrOutputParser()
+# )
 
 
 #celery route for tasks user_persona_rec_task
@@ -86,14 +86,15 @@ def evaluate_hypothesis_task(hypothesis_id: int, hypothesis_text: str, hypothesi
     try:
         # B. RUN RAG CHAIN
         # We pass the arguments directly into the chain
-        rag_input = {
-            "hypothesis": hypothesis_text,
-            "team_id": team_id,
-            "hypothesis_type": hypothesis_type
-        }
+        # rag_input = {
+        #     "hypothesis": hypothesis_text,
+        #     "team_id": team_id,
+        #     "hypothesis_type": hypothesis_type
+        # }
         
         # This performs the Vector Search + OpenAI Generation
-        ai_response = rag_chain.invoke(rag_input)
+        # ai_response = rag_chain.invoke(rag_input)
+        ai_response = "Placeholder - RAG chain commented out"
         
         # C. PARSE SCORE (Basic Logic)
         score = 0

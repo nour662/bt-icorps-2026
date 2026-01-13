@@ -35,6 +35,7 @@ def evaluate_interviewee_profile(self, hypothesis_id:int, hypothesis:str, hypoth
     data = json.loads(ai_response)
     for i in range (0, len(data)):
         addition = Hypotheses(
+            hypothesis_id = hypothesis_id,
             company_type = data[i]["Company Type"],
             market_segment = data[i]["Market Segment"],
             industry = data[i]["Industry"],
