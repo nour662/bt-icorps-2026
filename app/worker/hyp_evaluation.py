@@ -55,6 +55,17 @@ def format_docs(docs):
 #         # Then we pass it to the retriever to get relevant docs from the vector DB
 #         "guidelines": itemgetter("hypothesis") | retriever | format_docs,
         
+        # PASSTHROUGH: Pass the raw data to the prompt
+        # The prompt will use these values to fill in the template
+        "hypothesis": itemgetter("hypothesis"),
+        "team_id": itemgetter("team_id"),
+        "hypothesis_type": itemgetter("hypothesis_type"),
+        
+        "company_context": lambda x: x.get("company_context", "No additional context provided."),
+        "\"output\"": lambda x: "JSON String" # Or whatever this placeholder is for
+    }
+    | EVALUATION_PROMPT
+    | ChatOpenAI(model="gpt-4o", api_key=settings.OPENAI_API_KEY)
 #         # PASSTHROUGH: Pass the raw data to the prompt
 #         # The prompt will use these values to fill in the template
 #         "hypothesis": itemgetter("hypothesis"),

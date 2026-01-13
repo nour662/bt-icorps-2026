@@ -7,6 +7,7 @@ from app.models.interviewees_table import Interviewees # Your specific model
 from app.models.hypotheses_table import Hypotheses
 from app.models.team_table import Team
 from app.worker.interviewee_evaluation import evaluate_interviewee_profile # Updated task name
+from app.worker.user_interviewee_evaluation import evaluate_interviewee_task
 from app.schemas.interviewees import IntervieweeEvaluationBase, IntervieweeEvaluationResponse, RelevantIntervieweesList
 
 interviewee_router = APIRouter(
@@ -23,7 +24,7 @@ async def check_persona(data: IntervieweeEvaluationBase, db: Session = Depends(g
     # 2. Validation: Find the specific hypothesis and check evaluation status
     hypo = db.query(Hypotheses).filter(
         Hypotheses.team_id == data.team_id, 
-        Hypotheses.hypothesis == data.hypothesis
+        Hypotheses.id == data.hypothesis_id
     ).first()
 
     if not hypo:

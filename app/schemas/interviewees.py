@@ -18,7 +18,7 @@ class IntervieweeBase(BaseModel):
 # 2. Used for the POST /check_persona request
 class IntervieweeEvaluationBase(IntervieweeBase):
     team_id: str
-    hypothesis: str
+    hypothesis_id: int
     name: str
 
 # 3. Used for the GET /results/{id} response

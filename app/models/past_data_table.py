@@ -7,11 +7,17 @@ class PastData(Base):
     __tablename__ = "past_data"
     id = Column(Integer, primary_key=True)
 
-    # past interview information
+    # content (ex hypothesis or file)
+    content = Column(Text)
     s3_key = Column(String)
-    embeddings = Column(Vector(1536))
-    interview_evaulation = Column(Text)    
     
-    # team = relationship("Team", back_populates="past_data")
-    # chunks = relationship("DocumentChunk", back_populates="interviews", cascade="all, delete-orphan")
-
+    # ex past_hypothesis, past_interviews
+    data_type = Column(String)
+    
+    # outcomes
+    outcome = Column(Text)
+    embedding = Column(Vector(1536))
+    
+    # tags -> store industry for more information
+    #industry = Column(String)
+    

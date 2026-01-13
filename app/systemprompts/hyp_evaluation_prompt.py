@@ -104,7 +104,7 @@ Output the response in Markdown exactly as shown below. Do not add introductory 
 **Status:** [Ready for Interviews / Not Ready - Revise Immediately]
 
 Give a Json object with an output and the score as a number between 0 and 100.
-{"output": "<MARKDOWN OUTPUT HERE>", "score": <TOTAL_SCORE>}
+{{"output": "markdown_content", "score": 0}}
 """
 
 
