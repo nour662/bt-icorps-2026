@@ -5,7 +5,7 @@ from app import models
 #from app.worker import evaluate_interviews
 from app.schemas.team import NewTeam, TeamLogin
 from .auth_helper.password_security import hash_password, verify_password
-
+from .auth_helper.auth import create_access_token
 
 teams_router = APIRouter(
     prefix='/teams', tags=["Teams"]
@@ -27,9 +27,11 @@ async def authenticate_team(data: TeamLogin, db: Session = Depends(get_db)):
             status_code=401,
             detail="Incorrect Password"
         )
-    # need to provide a token here
+    token = create_access_token(team_id)
     return {
-        "message" : "Login successful"
+        "message" : "Login successful",
+        "access_token" : token,
+        "token_type" : "bearer"
     }
 
 @teams_router.post("/create_account")
