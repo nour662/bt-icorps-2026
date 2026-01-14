@@ -40,7 +40,7 @@ async def get_presigned_url(req: PresignRequest, team=Depends(get_current_team))
         )
     
     
-    # Use localhost for external presigned URLs
+    # Using localhost for external presigned URLs
     external_endpoint = settings.S3_ENDPOINT.replace("minio", "localhost")
     
     s3_external = boto3.client(
