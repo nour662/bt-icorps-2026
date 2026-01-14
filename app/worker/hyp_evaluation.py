@@ -4,11 +4,9 @@ import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from app.core.celery_app import celery_app
 
-# from operator import itemgetter
 from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnablePassthrough 
 from langchain_core.output_parsers import StrOutputParser
-# from langchain_postgres import PGVector 
 from app.core.config import settings
 from app.systemprompts.hyp_evaluation_prompt import EVALUATION_PROMPT
 from app.database.process_input_hypothesis import embed_hypothesis
@@ -19,7 +17,7 @@ from app.models.team_table import Team
 
 #needed for celery task
 from app.core.celery_app import celery_app
-from app.worker.rag_functions import top_k_chunks, format_rows_for_prompt
+from app.worker.rag_functions import top_k_chunks_past_data, format_rows_for_prompt
 
 # This embedds the celery task that contains inputs such as the 
 # hypothesis text, team id, and hypothesis type
@@ -33,7 +31,7 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
     
     db = SessionLocal()
     embedding = embed_hypothesis(hypothesis_id, hypothesis_text, db)
-    results = top_k_chunks(db, embedding, 5 , "Past Data")
+    results = top_k_chunks_past_data(db, embedding, 5)
 
     llm = ChatOpenAI(
        model="gpt-4o", 
@@ -83,5 +81,5 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
         # E. CLOSE DB SESSION
         db.close()
 
-    return "Evaluation Task Finished" 
+    return "Hypothesis Evaluation Task Finished" 
     

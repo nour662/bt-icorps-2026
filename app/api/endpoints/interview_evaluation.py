@@ -4,6 +4,7 @@ from app import models
 from app.core.config import settings
 # from app.worker import evaluate_interviews
 from app.schemas.files import PresignRequest, PresignResponse
+from app.schemas.interviews import InterviewEvaluationRequest, InterviewEvaluationResponse
 from sqlalchemy.orm import Session
 from app.models.interviews_table import Interviews
 # s3 imports: 
@@ -51,20 +52,46 @@ async def get_presigned_url(req: PresignRequest, team=Depends(get_current_team))
     )
     return response
 
-@interview_evaluation_router.post("/process_document")
-async def process_document(team_id: str, interviewee_name: str, s3_key: str, db: Session = Depends(get_db)):
-    # 1. Create the Interview Record
+
+@interview_evaluation_router.post("/evaluate_interview")
+async def evaluate_interview(data = InterviewEvaluationRequest, db : Session = Depends(get_db), team=Depends(get_current_team)):
+    # need to first add the interview to the database
+    # pass in the hypothesis id and the interview id and team id
     new_interview = Interviews(
-        team_id=team_id,
-        interviewee_name=interviewee_name,
-        s3_key=s3_key,
+        team_id=team.id,
+        hypothesis_id=data.hypothesis_id,
+        s3_key=data.s3_key,
         evaluated=False
     )
     db.add(new_interview)
     db.commit()
+    task = evaluate_interview_task.delay(
+        hypothesis_id = hypothesis_addition.id,
+        team_id = team.id,
+        interview_id = new_interview.id
+    )
     return {
-        "message" : "testing"
+        "task_id": task.id,
+        "status": "Processing",
+        "interviewee_id": new_interview.id,
     }
+
+@interview_evaluation_router.get("/status/{task_id}")
+async def get_status(task_id : str):
+    result = AsyncResult(task_id)
+    return {
+        "task_id" : task_id,
+        "status" : result.status
+    }
+@interview_evaluation_router.get("/result/{interview_id}", response_model=InterviewEvaluationResponse)
+async def get_result(interview_id :int):
+    interview = db.query(Interviews).filter(Interviews.id == interview_id)
+    response = InterviewEvaluationResponse(
+        evaluation = interview.interviews_output,
+        summary = interview.interviews_summar
+    )
+    return response
+
     
 
 
