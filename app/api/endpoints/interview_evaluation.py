@@ -11,6 +11,9 @@ from app.models.interviews_table import Interviews
 from app.api.endpoints.auth_helper.current_team import get_current_team
 from app.storage.s3 import get_s3_client
 from uuid import uuid4
+import boto3
+from botocore.config import Config
+    
 interview_evaluation_router = APIRouter(
     prefix='/interview', tags=["Interview"]
 )
@@ -35,9 +38,22 @@ async def get_presigned_url(req: PresignRequest, team=Depends(get_current_team))
             status_code=400,
             detail="Only .pdf files allowed"
         )
-    s3 = get_s3_client()
+    
+    
+    # Use localhost for external presigned URLs
+    external_endpoint = settings.S3_ENDPOINT.replace("minio", "localhost")
+    
+    s3_external = boto3.client(
+        "s3",
+        endpoint_url=external_endpoint,
+        aws_access_key_id=settings.S3_ACCESS_KEY,
+        aws_secret_access_key=settings.S3_SECRET_KEY,
+        region_name="us-east-1",
+        config=Config(signature_version="s3v4"),
+    )
+    
     key=f"teams/{team.id}/{uuid4()}-{req.filename}"
-    url = s3.generate_presigned_url(
+    url = s3_external.generate_presigned_url(
         ClientMethod="put_object",
         Params={
             "Bucket" : settings.S3_BUCKET_NAME,
@@ -46,6 +62,7 @@ async def get_presigned_url(req: PresignRequest, team=Depends(get_current_team))
         },
         ExpiresIn=600 #10 mintues
     )
+    
     response = PresignResponse(
         upload_url=url,
         object_key=key
