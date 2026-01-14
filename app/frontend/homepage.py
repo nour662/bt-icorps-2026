@@ -4,12 +4,12 @@ from sqlalchemy.orm import Session
 import css # Import the CSS styling
 
 #THESE THINGS ARE COMMENTED OUT FOR NOW
-from app.core.db.database import SessionLocal  # Adjust import based on your actual db file
-from app.models import Team
-from app.api.endpoints.auth_helper.password_security import verify_password
-from app.api.endpoints.auth_helper import create_access_token
+# from app.core.db.database import SessionLocal  # Adjust import based on your actual db file
+# from app.models import Team
+# from app.api.endpoints.auth_helper.password_security import verify_password
+# from app.api.endpoints.auth_helper import create_access_token
 
-#to run the file to do: streamlit run app/frontend/homepage.py
+#TO RUN the file to do: streamlit run app/frontend/homepage.py
 
 # I-CORPS THEME
 st.set_page_config(
@@ -20,81 +20,88 @@ st.set_page_config(
 )
 
 
-# --- 2. AUTHENTICATION LOGIC ---
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
-if "current_user" not in st.session_state:
-    st.session_state["current_user"] = None
+# # --- 2. AUTHENTICATION LOGIC ---
+# if "authenticated" not in st.session_state:
+#     st.session_state["authenticated"] = False
+# if "current_user" not in st.session_state:
+#     st.session_state["current_user"] = None
 
-def attempt_login(username, password):
-    """
-    Connects to your existing backend to verify credentials.
-    """
-    db = SessionLocal() # Manually open a session since we aren't in a FastAPI route
-    try:
-        # Assuming your Team model has a 'username' or 'email' field. Adjust 'team_name' as needed.
-        team = db.query(Team).filter(Team.team_name == username).first() 
+# def attempt_login(username, password):
+#     """
+#     Connects to your existing backend to verify credentials.
+#     """
+#     db = SessionLocal() # Manually open a session since we aren't in a FastAPI route
+#     try:
+#         # Assuming your Team model has a 'username' or 'email' field. Adjust 'team_name' as needed.
+#         team = db.query(Team).filter(Team.team_name == username).first() 
         
-        if not team:
-            st.error("Team not found.")
-            return False
+#         if not team:
+#             st.error("Team not found.")
+#             return False
             
-        # Verify Password using your existing security file
-        if verify_password(password, team.hashed_password):
-            st.session_state["authenticated"] = True
-            st.session_state["current_user"] = team.team_name
+#         # Verify Password using your existing security file
+#         if verify_password(password, team.hashed_password):
+#             st.session_state["authenticated"] = True
+#             st.session_state["current_user"] = team.team_name
             
-            # Optional: Generate token if you need it for API calls later
-            token = create_access_token(team.team_id)
-            st.session_state["token"] = token
-            return True
-        else:
-            st.error("Incorrect password.")
-            return False
-    except Exception as e:
-        st.error(f"Login Error: {e}")
-        return False
-    finally:
-        db.close() # Always close the session
+#             # Optional: Generate token if you need it for API calls later
+#             token = create_access_token(team.team_id)
+#             st.session_state["token"] = token
+#             return True
+#         else:
+#             st.error("Incorrect password.")
+#             return False
+#     except Exception as e:
+#         st.error(f"Login Error: {e}")
+#         return False
+#     finally:
+#         db.close() # Always close the session
 
-# 3. LOGIN SCREEN 
-def login_page():
-    # Centering strategy using columns
-    c1, c2, c3 = st.columns([1, 2, 1])
+# # 3. LOGIN SCREEN 
+# def login_page():
+#     # Centering strategy using columns
+#     c1, c2, c3 = st.columns([1, 2, 1])
     
-    with c2:
-        #adds some space at the top of the login box what unsafe_allow_html=True does is allow html code to be used in streamlit
-        st.markdown("<br><br>", unsafe_allow_html=True)  
-        st.markdown('<div class="login-container">', unsafe_allow_html=True)
-        st.title("I-Corps Login")
-        st.write("Please sign in to access the dashboard.")
+#     with c2:
+#         #adds some space at the top of the login box what unsafe_allow_html=True does is allow html code to be used in streamlit
+#         st.markdown("<br><br>", unsafe_allow_html=True)  
+#         st.markdown('<div class="login-container">', unsafe_allow_html=True)
+#         st.title("I-Corps Login")
+#         st.write("Please sign in to access the dashboard.")
         
-        username_input = st.text_input("Team Name")
-        password_input = st.text_input("Password", type="password")
+#         username_input = st.text_input("Team Name")
+#         password_input = st.text_input("Password", type="password")
         
-        if st.button("Login", key="login_btn"):
-            if attempt_login(username_input, password_input):
-                st.rerun() # Reload to show dashboard
+#         if st.button("Login", key="login_btn"):
+#             if attempt_login(username_input, password_input):
+#                 st.rerun() # Reload to show dashboard
         
-        st.markdown('</div>', unsafe_allow_html=True)
+#         st.markdown('</div>', unsafe_allow_html=True)
 
 
 
 def main_dashboard():
     # Sidebar Navigation
     with st.sidebar:
-        st.image("app/frontend/static/logo.png", width=150) # Use your logo here
-        st.title(f"Welcome, {st.session_state['current_user']}")
+        #st.image("app/frontend/static/logo.png", width=150) # Use your logo here
+
+        #for now use this: 
+        user = st.session_state.get("current_user", "Guest")
+        st.title(f"Welcome, {user}")
+
+        #st.title(f"Welcome, {st.session_state['current_user']}")
         st.markdown("---")
-        st.page_link("homepage_app.py", label="Home", icon="🏠")
+        st.page_link("homepage.py", label="Home", icon="🏠")
         st.page_link("pages/1_Page1.py", label="Hypothesis Eval", icon="📄") # Update filenames
         st.page_link("pages/2_Page2.py", label="User Persona", icon="👥")
         st.page_link("pages/3_Page3.py", label="Interview Analysis", icon="📊")
         
         st.markdown("---")
-        if st.button("Logout"):
-            st.session_state["authenticated"] = False
-            st.rerun()
+        
+        # #Might not be needed not sure how we will do autho, will figure that out on thursday
+        # if st.button("Logout"):
+        #     st.session_state["authenticated"] = False
+        #     st.rerun()
 
     # Main Content Area
     st.markdown("<h1 style='text-align: center; color: #CC2029;'>Project Dashboard</h1>", unsafe_allow_html=True)
@@ -110,8 +117,8 @@ def main_dashboard():
         with st.container(border=True): 
             st.markdown("<h3 style='text-align: center;'>Hypothesis Evaluation</h3>", unsafe_allow_html=True)
             # Display Image
-            st.image("https://placehold.co/600x400/213F6B/FFF?text=Hypothesis", use_container_width=True)
-            st.markdown("<p style='text-align: center; font-size: 0.9em;'>Evaluate your business hypotheses and user personas with AI assistance.</p>", unsafe_allow_html=True)
+            #st.image("https://placehold.co/600x400/213F6B/FFF?text=Hypothesis", use_container_width=True)
+            st.markdown("<p style='text-align: center; font-size: 0.9em;'>Get your businesses Ecosystem and Customer hypotheses scored and user persona recommendations with AI assistance.</p>", unsafe_allow_html=True)
             
             # The Button triggers the navigation
             if st.button("Go to Module ➔", key="btn1"):
@@ -121,7 +128,7 @@ def main_dashboard():
     with col2:
         with st.container(border=True):
             st.markdown("<h3 style='text-align: center;'>User Persona</h3>", unsafe_allow_html=True)
-            st.image("https://placehold.co/600x400/6883A3/FFF?text=Personas", use_container_width=True)
+            #st.image("https://placehold.co/600x400/6883A3/FFF?text=Personas", use_container_width=True)
             st.markdown("<p style='text-align: center; font-size: 0.9em;'>Assess user personas and get tailored interview question suggestions.</p>", unsafe_allow_html=True)
             
             if st.button("Go to Module ➔", key="btn2"):
@@ -131,18 +138,20 @@ def main_dashboard():
     with col3:
         with st.container(border=True):
             st.markdown("<h3 style='text-align: center;'>Interview Analysis</h3>", unsafe_allow_html=True)
-            st.image("https://placehold.co/600x400/CC2029/FFF?text=Analysis", use_container_width=True)
+            #st.image("https://placehold.co/600x400/CC2029/FFF?text=Analysis", use_container_width=True)
             st.markdown("<p style='text-align: center; font-size: 0.9em;'>Analyze interview transcripts for insights and alignment with goals.</p>", unsafe_allow_html=True)
             
             if st.button("Go to Module ➔", key="btn3"):
                 st.switch_page("pages/3_Page3.py")
 
 
-# --- 5. CONTROL FLOW ---
-if not st.session_state["authenticated"]:
-    login_page()
-else:
-    main_dashboard()
+# # --- 5. CONTROL FLOW ---
+# if not st.session_state["authenticated"]:
+#     login_page()
+# else:
+#     main_dashboard()
+main_dashboard()
+
 
 
 
