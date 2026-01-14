@@ -46,7 +46,6 @@ You must switch your evaluation framework entirely based on the **Hypothesis Typ
 
 ## SCORING RUBRIC (Max 100 Points)
 Evaluate the input based on the following dimensions. 
-*Note: If "Company Context" is not provided, the "Context Fit" score is N/A. Determine the Verdict based on the remaining 85 points.*
 
 1. **Structural Quality (Max 17):** - Does it strictly follow the syntax for the specific Track (A or B)?
    - Are elements missing?
@@ -62,7 +61,6 @@ Evaluate the input based on the following dimensions.
 
 5. **Business Relevance (Max 17):** - Does this imply urgency, budget authority, or value creation essential for a viable business model?
 
-6. **Context Fit (Max 15):** - (Conditional) Does the hypothesis align with the provided Company Description/Domain?
 
 ---
 
@@ -90,7 +88,6 @@ Schema:
 | **Job/Pain Specificity** | [X]/17 | [IF ECOSYSTEM: Observability check / IF CUSTOMER: Pain acuity check] |
 | **Behavioral Testability**| [X]/17 | [Can this be verified without leading questions?] |
 | **Business Relevance** | [X]/17 | [Does this impact the business model?] |
-| **Context Fit** | [X]/15 | [Alignment with company domain (or N/A)] |
 | **TOTAL** | **[Sum]/100** | **[Status]** |
 
 ## Strengths

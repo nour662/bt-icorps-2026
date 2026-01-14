@@ -11,14 +11,14 @@ class DocumentChunk(Base):
     # past_data_id = Column(Integer, ForeignKey("past_data.id"), nullable = True)
 
 
-    __table_args__ = (
-        # since interview id and past data id chunks both stored in same table, ensure
-        # data in table corresponds with at oleast one entry
-        CheckConstraint(
-            "(interview_id IS NOT NULL) OR (past_data_id IS NOT NULL)",
-            name="at_least_one_parent"
-        ),
-    )
+    # __table_args__ = (
+    #     # since interview id and past data id chunks both stored in same table, ensure
+    #     # data in table corresponds with at oleast one entry
+    #     CheckConstraint(
+    #         "(interview_id IS NOT NULL) OR (past_data_id IS NOT NULL)",
+    #         name="at_least_one_parent"
+    #     ),
+    # )
     
     s3_key = Column(String) # s3 key for file access
     content = Column(Text)
