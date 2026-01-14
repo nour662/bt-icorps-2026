@@ -9,7 +9,7 @@ class PastData(Base):
 
     # content (ex hypothesis or file)
     content = Column(Text)
-    s3_key = Column(String)
+    s3_key = Column(String, index=True)
     
     # ex past_hypothesis, past_interviews
     data_type = Column(String)

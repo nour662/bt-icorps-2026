@@ -10,7 +10,6 @@ class Interviews(Base):
     hypothesis_id = Column(Integer, ForeignKey("hypotheses.id"))
 
     s3_key = Column(String, unique=True) # s3 key for file access
-    # interviewee_name = Column(String)
     
     evaluated = Column(Boolean, default=False)
     
