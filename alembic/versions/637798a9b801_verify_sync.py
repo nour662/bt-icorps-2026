@@ -1,8 +1,8 @@
-"""sync_document_chunks_constraint
+"""verify_sync
 
-Revision ID: 3ce84c3db00d
-Revises: d04124c9383b
-Create Date: 2026-01-14 18:47:58.987289
+Revision ID: 637798a9b801
+Revises: 923835066060
+Create Date: 2026-01-14 21:53:47.084986
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3ce84c3db00d'
-down_revision: Union[str, Sequence[str], None] = 'd04124c9383b'
+revision: str = '637798a9b801'
+down_revision: Union[str, Sequence[str], None] = '923835066060'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

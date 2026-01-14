@@ -15,7 +15,6 @@ class PastData(Base):
     data_type = Column(String)
     
     # outcomes
-    outcome = Column(Text)
     embedding = Column(Vector(1536))
     
     # tags -> store industry for more information

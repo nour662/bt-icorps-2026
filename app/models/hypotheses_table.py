@@ -7,7 +7,8 @@ class Hypotheses(Base):
     __tablename__ = "hypotheses"
     id = Column(Integer, primary_key=True)
     team_id = Column(String, ForeignKey("teams.id"))
-    type = Column(String)
+
+    hyp_type = Column(String)
     hypothesis = Column(Text)
     
     evaluated = Column(Boolean, default=False)
