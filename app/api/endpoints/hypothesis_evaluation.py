@@ -6,6 +6,7 @@ from app.schemas.hypothesis import HypothesisEvaluationRequest, HypothesisEvalua
 from sqlalchemy.orm import Session
 from celery.result import AsyncResult
 from app import models
+from app.core.celery_app import celery_app
 
 
 evaluation_router = APIRouter(
@@ -22,7 +23,7 @@ async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = D
 
     hypothesis_addition = models.Hypotheses(
         team_id = team_id,
-        hypothesis_type = hypothesis_type,
+        type = hypothesis_type,
         hypothesis = hypothesis
     )
     db.add(hypothesis_addition)
@@ -46,7 +47,7 @@ async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = D
 # route to check on the status of the hypothesis evaluation in celery
 @evaluation_router.get("/status/{task_id}")
 async def get_status(task_id : str):
-    result = AsyncResult(task_id)
+    result = celery_app.AsyncResult(task_id)
     return {
         "task_id" : task_id,
         "status" : result.status,

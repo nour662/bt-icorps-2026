@@ -44,7 +44,10 @@ def evaluate_interviewee_profile(self, hypothesis_id:int):
         
         prompt_inputs = {
             "guidelines" : guidelines, # add if necessary later
-            "hypothesis" : f"{hypo.hypothesis}. Respond with a list of personas in JSON format."
+            "hypothesis" : (
+            f"{hypo.hypothesis}." 
+            "Respond with a list of at least 5 personas in JSON format."
+            )
         }
         
         prompt = USER_PERSONA_REC_EVALUATION_PROMPT.format_messages(**prompt_inputs)

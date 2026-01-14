@@ -9,7 +9,7 @@ class PastData(Base):
 
     # content (ex hypothesis or file)
     content = Column(Text)
-    s3_key = Column(String, index=True)
+    s3_key = Column(String)
     
     # ex past_hypothesis, past_interviews
     data_type = Column(String)
@@ -20,4 +20,6 @@ class PastData(Base):
     
     # tags -> store industry for more information
     #industry = Column(String)
+    
+    #225 chunk size!
     

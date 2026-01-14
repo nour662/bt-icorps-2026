@@ -47,19 +47,19 @@ You must switch your evaluation framework entirely based on the **Hypothesis Typ
 ## SCORING RUBRIC (Max 100 Points)
 Evaluate the input based on the following dimensions. 
 
-1. **Structural Quality (Max 17):** - Does it strictly follow the syntax for the specific Track (A or B)?
+1. **Structural Quality (Max 20):** - Does it strictly follow the syntax for the specific Track (A or B)?
    - Are elements missing?
 
-2. **Customer Clarity (Max 17):** - Is the role specific (e.g., "Hedge Fund Risk Manager") rather than vague (e.g., "Users")? 
+2. **Customer Clarity (Max 20):** - Is the role specific (e.g., "Hedge Fund Risk Manager") rather than vague (e.g., "Users")? 
    - Is the decision-maker accessible?
 
-3. **Job or Pain Specificity (Max 17):** - **If Ecosystem:** Is the action observable? Can you stand next to them and see it? 
+3. **Job or Pain Specificity (Max 20):** - **If Ecosystem:** Is the action observable? Can you stand next to them and see it? 
    - **If Customer:** Is the pain urgent/expensive? Does it avoid "solution bias"?
 
-4. **Behavioral Testability (Max 17):** - Can you design a valid interview question to verify this? 
+4. **Behavioral Testability (Max 20):** - Can you design a valid interview question to verify this? 
    - Is it falsifiable?
 
-5. **Business Relevance (Max 17):** - Does this imply urgency, budget authority, or value creation essential for a viable business model?
+5. **Business Relevance (Max 20):** - Does this imply urgency, budget authority, or value creation essential for a viable business model?
 
 
 ---

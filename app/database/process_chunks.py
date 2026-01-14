@@ -74,3 +74,4 @@ def process_chunks_to_vectors(chunks):
     vectors = embeddings_model.embed_documents(chunks)
 
     return vectors
+

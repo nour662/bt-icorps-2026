@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 def top_k_chunks_past_data(db: Session, query_embedding, k):
     sql = """
         SELECT id, content
-        FROM document_chunks
+        FROM past_document_chunks
         WHERE past_data_id IS NOT NULL
-        ORDER BY embedding <=> :q_emb
+        ORDER BY embedding <=> (:q_emb)::vector
         LIMIT :k
     """
     params = {
@@ -20,7 +20,7 @@ def top_k_chunks_interview_data(db: Session, query_embedding, k, interview_id):
         SELECT id, content
         FROM document_chunks
         WHERE interview_id = :interview_id
-        ORDER BY embedding <=> :q_emb
+        ORDER BY embedding <=> (:q_emb)::vector
         LIMIT :k
     """
     params = {
