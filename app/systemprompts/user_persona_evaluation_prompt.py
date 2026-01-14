@@ -86,16 +86,8 @@ Identify systemic issues in the interview plan:
 """
 
 # 2. The Template Object
-# This wraps the text into a LangChain object that expects "guidelines" and "hypothesis"
+# This wraps the text into a LangChain object that expects something ... 
 USER_PERSONA_EVALUATION_PROMPT = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_INSTRUCTION_TEXT),
-    ("user", """
-     Evaluate the Proposed Interviewee against the Hypothesis: 
-     Hypothesis: {hypothesis}
-     
-     Proposed interviewee: 
-     Industry: {industry}
-     Occupation: {occupation}
-     Experience: {experience}
-    """)
+    ("user", "Evaluate the following : {#hypothesis}")
 ])
