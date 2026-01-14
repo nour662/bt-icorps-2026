@@ -21,3 +21,5 @@ class PastData(Base):
     # tags -> store industry for more information
     #industry = Column(String)
     
+    #225 chunk size!
+    

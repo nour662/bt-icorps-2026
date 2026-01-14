@@ -4,6 +4,7 @@ from celery.result import AsyncResult
 
 from app.core.db.database import get_db
 from app.models.interviewees_table import Interviewees # Your specific model
+from app.models.ai_interviewees_table import AI_Interviewees
 from app.models.hypotheses_table import Hypotheses
 from app.models.team_table import Team
 from app.worker.interviewee_evaluation import evaluate_interviewee_profile # Updated task name
@@ -86,9 +87,30 @@ async def get_results(interviewee_id: int, db: Session = Depends(get_db)):
         "customers_output_score": interviewee.customers_output_score
     }
 
+@interviewee_router.get("/generate_relevant_personas/{hypothesis_id}")
+async def get_relevant_customers(hypothesis_id: int, db: Session = Depends(get_db)):
+    hypo = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
+    if not hypo:
+        raise HTTPException(status_code=404, detail="Hypothesis not found.")
+    
+    # 
+    task = evaluate_interviewee_profile.delay(hypothesis_id=hypothesis_id)
+    return {
+        "task_id": task.id,
+        "status": "Generating ideal personas...",
+        "hypothesis_id": hypothesis_id
+    }
+    
+    
 @interviewee_router.get("/relevant_interviewees/{hypothesis_id}", response_model=RelevantIntervieweesList)
 async def get_relevant_customers(hypothesis_id: int, db: Session = Depends(get_db)):
-    hypothesis = db.query(models.Hypotheses).filter(models.Hypotheses.id == hypothesis_id).first()
-    return {
-        relevant_customers : hypothesis.suggested_customer_profiles
-    }
+    """Returns the list of AI-suggested personas from the database."""
+    
+    suggestions = db.query(AI_Interviewees).filter(
+        AI_Interviewees.hypothesis_id == hypothesis_id
+    ).all()
+    
+    if not suggestions:
+        return {"relevant_customers": []}
+        
+    return {"relevant_customers": suggestions}

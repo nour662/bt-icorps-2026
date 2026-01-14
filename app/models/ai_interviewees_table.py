@@ -11,7 +11,7 @@ class AI_Interviewees(Base):
     company_type = Column(String)
     market_segment = Column(String)
     industry = Column(String) 
-    poition = Column(String)
+    position = Column(String)
     role = Column(String)
     outreach_methods = Column(String)
     

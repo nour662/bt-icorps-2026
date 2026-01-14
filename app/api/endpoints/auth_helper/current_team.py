@@ -3,8 +3,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session 
 
 from .auth import decode_access_token
-from app.core.database import get_db
+from app.core.db.database import get_db
 from app.models import Team
+from app.core.config import settings
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -23,7 +24,7 @@ def get_current_team(creds: HTTPAuthorizationCredentials = Depends(bearer_scheme
             status_code=401,
             detail="Invalid or expired token"
         )
-    team = db.query(Team).filter(Team.team_id == team_id).first()
+    team = db.query(Team).filter(Team.id == team_id).first()
     if not team: 
         raise HTTPException(
             status_code=401,
