@@ -8,6 +8,7 @@ class Interviewees(Base):
     id = Column(Integer, primary_key=True) # automatically creates primary key
     team_id = Column(String, ForeignKey("teams.id")) # foreign key
 
+    customer_name = Column(String)
     customer_industry = Column(Text)
     customer_experience = Column(Text)
     customer_occupation = Column(Text)

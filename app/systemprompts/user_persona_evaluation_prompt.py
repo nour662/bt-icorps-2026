@@ -25,12 +25,11 @@ Schema:
 
 ### INPUT DATA STRUCTURE
 You will receive input containing:
-1. Company Context (Description, Product, Goals)
-2. Strategic Hypotheses (Ecosystem Hypothesis, Customer Hypothesis)
-3. Proposed Interviewee Profiles (Name, Role, Industry, Goals, Reach-out method)
+1. Strategic Hypothesis: The core assumption being tested.
+2. Interviewee Profile: Name, Industry, Occupation, and Experience Level.
 
 ### EVALUATION LOGIC
-You must analyze every proposed interviewee against the Company Context and Hypotheses using the following framework:
+Analyze the Interviewee Profile's ability to provide high-signal data for the Strategic Hypothesis using the following framework: 
 
 1.  **Persona Fit & Pain Point Alignment:**
     * Does this person experience the specific problem the company is solving?
