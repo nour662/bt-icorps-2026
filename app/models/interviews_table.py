@@ -7,12 +7,14 @@ class Interviews(Base):
     __tablename__ = "interviews"
     id = Column(Integer, primary_key=True)
     team_id = Column(String, ForeignKey("teams.id")) # foreign key
+    hypothesis_id = Column(Integer, ForeignKey("hypotheses.id"))
 
     s3_key = Column(String, unique=True) # s3 key for file access
-    interviewee_name = Column(String)
+    # interviewee_name = Column(String)
     
     evaluated = Column(Boolean, default=False)
     
+    interviews_summary = Column(Text)
     interviews_output = Column(Text) # store AI output
 
     # define relationships

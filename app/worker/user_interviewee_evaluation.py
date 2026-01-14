@@ -36,16 +36,16 @@ def evaluate_interviewee_task(self, interviewee_id: int, hypothesis_text: str):
         guidelines = "none for now" # insert once we figure out logic
         
         prompt_inputs = {
-        "guidelines" : guidelines, # add if necessary later
-        "hypothesis" : hypothesis_text,
-        "name": interviewee.customer_name,      
-        "industry": interviewee.customer_industry,
-        "occupation": interviewee.customer_occupation,
-        "experience": interviewee.customer_experience
+            "guidelines" : guidelines, # add if necessary later
+            "hypothesis" : hypothesis_text,
+            "name": interviewee.customer_name,      
+            "industry": interviewee.customer_industry,
+            "occupation": interviewee.customer_occupation,
+            "experience": interviewee.customer_experience
         }
         prompt = USER_PERSONA_EVALUATION_PROMPT.format_messages(**prompt_inputs)
         response = llm.invoke(prompt)
-        print(f"DEBUG - RAW AI RESPONSE: {response.content}")
+        
         response_content = response.content
         if "```json" in response_content:
             response_content = response_content.split("```json")[1].split("```")[0].strip()

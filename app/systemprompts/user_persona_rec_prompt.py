@@ -29,15 +29,18 @@ Format Output: Present the recommendations in the strict format defined below.
 Mandatory Output Format
 
 Do not use conversational filler. Output the recommendations as a structured list of JSON objects. Each recommendation must include exactly these fields in this JSON format:
-{
-    "Company Type" : [e.g., Enterprise SaaS, Regional Hospital, Boutique Firm],
-    "Market Segment": [Specific segment, e.g., North American Logistics],
-    "Industry" : [Standard Industry Classification, e.g., Supply Chain Management],
-    "Position" : [Job Title],
-    "Role" : [Select one: End User, Decision Maker, Influencer, Economic Buyer, Gatekeeper, Saboteur],
-    "Recommended Outreach Methods" : [Specific tactics for this persona],
-}
-
+{{
+    "personas": [
+        {{
+            "Company Type": "Enterprise SaaS",
+            "Market Segment": "North American Logistics",
+            "Industry": "Supply Chain Management",
+            "Position": "VP of Operations",
+            "Role": "Decision Maker",
+            "Recommended Outreach Methods": "LinkedIn Sales Navigator filter for 'Logistics' and 'Operations' in Fortune 500."
+        }}
+    ]
+}}
 Repeat this block for every recommended persona.
 
 
