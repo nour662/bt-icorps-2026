@@ -34,7 +34,7 @@ def embed_hypothesis(hypothesis_id:int, hypothesis_text:str, db: Session):
     token_count = get_tokens(hypothesis_text)
     if token_count > MAX_HYPOTHESIS_TOKENS:
         print(f"Hypothesis is too long")
-        return False
+        return None
 
     # db = SessionLocal()
     
@@ -52,8 +52,10 @@ def embed_hypothesis(hypothesis_id:int, hypothesis_text:str, db: Session):
         if hypo:
             hypo.embedding = vector
             db.commit()
+            return vector
     except Exception as e:
         db.rollback()
+        return None
     finally: 
         db.close()
 

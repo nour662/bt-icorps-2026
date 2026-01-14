@@ -33,7 +33,7 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
     
     db = SessionLocal()
     embedding = embed_hypothesis(hypothesis_id, hypothesis_text, db)
-    results = top_k_chunks(db, embedding, 5 , "Past Data")
+    results = top_k_chunks(db, embedding, 5 , "Past Data", team_id)
 
     llm = ChatOpenAI(
        model="gpt-4o", 
