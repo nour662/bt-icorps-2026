@@ -11,6 +11,18 @@ You must evaluate interviewees based on the strict principles of the Scientific 
 
 {guidelines}
 
+## REQUIRED OUTPUT FORMAT
+
+Return ONLY valid JSON.
+- Do NOT include any surrounding text.
+- Do NOT include markdown fences (```).
+- The value of "output" MUST be a single string containing the full Markdown evaluation.
+- The value of "score" MUST be an integer between 0 and 100.
+
+Schema:
+{{"output": "<markdown string>", "score": <integer 0-100>}}
+
+
 ### INPUT DATA STRUCTURE
 You will receive input containing:
 1. Company Context (Description, Product, Goals)
@@ -78,5 +90,13 @@ Identify systemic issues in the interview plan:
 # This wraps the text into a LangChain object that expects "guidelines" and "hypothesis"
 USER_PERSONA_EVALUATION_PROMPT = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_INSTRUCTION_TEXT),
-    ("user", "Evaluate the following hypothesis: {hypothesis}")
+    ("user", """
+     Evaluate the Proposed Interviewee against the Hypothesis: 
+     Hypothesis: {hypothesis}
+     
+     Proposed interviewee: 
+     Industry: {industry}
+     Occupation: {occupation}
+     Experience: {experience}
+    """)
 ])
