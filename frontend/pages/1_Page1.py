@@ -70,11 +70,11 @@ with container:
                     # # db.close()
                                 
             #have the score show colors on a wheel like red if its low yellow if its like 65-79 and light green then green then dark green for 80-89 90-99 and 100
-            if score >= 80:
-                st.success("You have a Strong Hypothesis")
-                with st.spinner("Generating user personas..."):
+            # if score >= 80:
+            #     st.success("You have a Strong Hypothesis")
+            #     with st.spinner("Generating user personas..."):
                 # personas = generate_personas_function(h_desc)
-                # st.write(personas)
-                    pass
-            else:
-                st.feedback("You have a Weak Hypothesis")
+            #     # st.write(personas)
+            #         pass
+            # else:
+            #     st.feedback("You have a Weak Hypothesis")
