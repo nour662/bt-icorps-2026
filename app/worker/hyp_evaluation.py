@@ -14,7 +14,6 @@ from sqlalchemy.orm import Session
 from app.core.db.database import SessionLocal
 from app.models.hypotheses_table import Hypotheses
 from app.models.team_table import Team
-from sqlalchemy import desc, func
 
 #needed for celery task
 from app.core.celery_app import celery_app
@@ -29,8 +28,17 @@ from app.worker.rag_functions import top_k_chunks_past_data, format_rows_for_pro
 
 
 @celery_app.task(name="evaluate_hypothesis_task", bind=True)
-def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hypothesis_type: str, team_id: str):    
+def evaluate_hypothesis_task(self, hypothesis_id: int):    
 
+    hyp = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
+    
+    if hyp:
+        hypothesis_text = hyp.hypothesis
+        hypothesis_type = hyp.hyp_type.lower() # normalize so case doesn't matter
+        team_id = hyp.team_id
+    else:
+        print("Hypothesis not found!")
+    
     
     print(f" Worker check for Hypothesis ID: {hypothesis_id}")
     
@@ -38,29 +46,27 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
     embedding = embed_hypothesis(hypothesis_id, hypothesis_text, db)
     
     # evaluate customer hypothesis against current ecosystem
-    if hypothesis_type.lower() == "customer":
+    if hypothesis_type == "customer":
         print(f"Running Customer Validation for ID: {hypothesis_id}")
         ecosystem_matches = db.query(
             Hypotheses, 
             (1 - Hypotheses.embedding.cosine_distance(embedding)).label("similarity")
         ).filter(
             Hypotheses.team_id == team_id,
-            func.lower(Hypotheses.hyp_type) == "ecosystem"
-        ).order_by(desc("similarity")).limit(3).all()
+            Hypotheses.hyp_type == "ecosystem"
+        ).order_by("similarity").limit(3).all()
             
         SIMILARITY_THRESHOLD = 0.7
-        print(f"The similarity is: {round(ecosystem_matches[0].similarity, 2)} \n")
         if not ecosystem_matches or ecosystem_matches[0].similarity < SIMILARITY_THRESHOLD:
-            hypotheses_output = "No Match Found: This customer hypothesis does not align with your current ecosystem."
-            hypotheses_output_score = 0
-            evaluated = True
+            hyp.hypotheses_output = "No Match Found: This customer hypothesis does not align with your current ecosystem."
+            hyp.hypotheses_output_score = 0
+            hyp.evaluated = True
             db.commit()
             return "No Ecosystem Matches"
         ecosystem_context = "\n".join([
             f"- {m.Hypotheses.hypothesis} (Similarity: {round(m.similarity, 2)})" 
             for m in ecosystem_matches
         ])
-        print(f"\n--- ECOSYSTEM CONTEXT PREPARED ---\n{ecosystem_context}\n----------------------------------")
     else:
         print(f"Running Ecosystem Evaluation for ID: {hypothesis_id}")
         

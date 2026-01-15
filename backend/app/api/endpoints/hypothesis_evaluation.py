@@ -23,7 +23,7 @@ async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = D
 
     hypothesis_addition = models.Hypotheses(
         team_id = team_id,
-        type = hypothesis_type,
+        hyp_type = hypothesis_type,
         hypothesis = hypothesis
     )
     db.add(hypothesis_addition)
