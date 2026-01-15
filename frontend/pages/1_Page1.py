@@ -12,6 +12,6 @@ sidebar()
 st.title("Hypothesis Evaluation and User Persona Recommendation")
 
 
-
+col1 = st.columns(1)
 # col1 = st.container()
 # with col1:
