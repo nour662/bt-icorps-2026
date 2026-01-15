@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from app.core.db.database import get_db
 from app.worker.hyp_evaluation import evaluate_hypothesis_task # celery tasks that need to be called (will update as more celery tasks are created)
-from app.schemas.hypothesis import HypothesisEvaluationRequest, HypothesisEvaluationResponse
+from app.schemas.hypothesis import HypothesisEvaluationRequest, HypothesisEvaluationResponse, HypothesisDropdown
 from sqlalchemy.orm import Session
 from celery.result import AsyncResult
 from app import models
@@ -74,3 +74,11 @@ async def get_hypothesis_results(hypothesis_id: int, db: Session = Depends(get_d
         "hypotheses_output_score" : hypothesis.hypotheses_output_score
     }
     
+
+@evaluation_router.get("/dropdown", response_model=List[HypothesisDropdown]) # only send id and text and transform to JSON
+async def get_hypotheses_for_dropdown(db: Session = Depends(get_db), team_id : int):
+    results = db.query(models.Hypotheses).filter(
+        models.Hypotheses.team_id == team.id
+    ).all()
+    
+    return results
