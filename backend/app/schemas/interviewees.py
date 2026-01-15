@@ -22,7 +22,6 @@ class IntervieweeEvaluationBase(IntervieweeBase):
     #team_id: str
     hypothesis_id: int
     name: str
-    interviewee_bio: str
 
 # 3. Used for the GET /results/{id} response
 # This matches your Interviewees table columns exactly
