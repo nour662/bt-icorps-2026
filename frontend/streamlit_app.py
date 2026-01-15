@@ -1,7 +1,13 @@
 import streamlit as st
 import time
 from sqlalchemy.orm import Session
-import css # Import the CSS styling
+from theme import i_corp_theme, sidebar
+from css import apply_css
+import streamlit as st
+
+i_corp_theme()  
+apply_css()       
+sidebar() 
 
 #THESE THINGS ARE COMMENTED OUT FOR NOW
 # from app.core.db.database import SessionLocal  # Adjust import based on your actual db file
@@ -9,9 +15,9 @@ import css # Import the CSS styling
 # from app.api.endpoints.auth_helper.password_security import verify_password
 # from app.api.endpoints.auth_helper import create_access_token
 
-#TO RUN the file to do: streamlit run app/frontend/homepage.py
+#TO RUN the file to do: streamlit run streamlit_app.py
 
-# I-CORPS THEME
+
 st.set_page_config(
     page_title="I-Corps Project Dashboard",
     page_icon="🚀", #This is going to be updated with Mtech ventures or umd logo
@@ -78,30 +84,7 @@ st.set_page_config(
         
 #         st.markdown('</div>', unsafe_allow_html=True)
 
-
-
-def main_dashboard():
-    # Sidebar Navigation
-    with st.sidebar:
-        #st.image("app/frontend/static/logo.png", width=150) # Use your logo here
-
-        #for now use this: 
-        user = st.session_state.get("current_user", "Guest")
-        st.title(f"Welcome, {user}")
-
-        #st.title(f"Welcome, {st.session_state['current_user']}")
-        st.markdown("---")
-        st.page_link("homepage.py", label="Home", icon="🏠")
-        st.page_link("pages/1_Page1.py", label="Hypothesis Eval", icon="📄") # Update filenames
-        st.page_link("pages/2_Page2.py", label="User Persona", icon="👥")
-        st.page_link("pages/3_Page3.py", label="Interview Analysis", icon="📊")
-        
-        st.markdown("---")
-        
-        # #Might not be needed not sure how we will do autho, will figure that out on thursday
-        # if st.button("Logout"):
-        #     st.session_state["authenticated"] = False
-        #     st.rerun()
+def main_dashboard():     
 
     # Main Content Area
     st.markdown("<h1 style='text-align: center; color: #CC2029;'>Project Dashboard</h1>", unsafe_allow_html=True)
