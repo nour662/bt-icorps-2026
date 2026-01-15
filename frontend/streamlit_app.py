@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from theme import i_corp_theme, sidebar
 from css import apply_css
 import streamlit as st
+import requests
 
 i_corp_theme()  
 apply_css()       
@@ -17,6 +18,7 @@ sidebar()
 
 #TO RUN the file to do: streamlit run frontend/streamlit_app.py
 
+API_BASE = "http://localhost:8000"
 
 st.set_page_config(
     page_title="I-Corps Project Dashboard",
@@ -27,62 +29,57 @@ st.set_page_config(
 
 
 # # --- 2. AUTHENTICATION LOGIC ---
-# if "authenticated" not in st.session_state:
-#     st.session_state["authenticated"] = False
-# if "current_user" not in st.session_state:
-#     st.session_state["current_user"] = None
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+if "current_user" not in st.session_state:
+    st.session_state["current_user"] = None
 
-# def attempt_login(username, password):
-#     """
-#     Connects to your existing backend to verify credentials.
-#     """
-#     db = SessionLocal() # Manually open a session since we aren't in a FastAPI route
-#     try:
-#         # Assuming your Team model has a 'username' or 'email' field. Adjust 'team_name' as needed.
-#         team = db.query(Team).filter(Team.team_name == username).first() 
-        
-#         if not team:
-#             st.error("Team not found.")
-#             return False
-            
-#         # Verify Password using your existing security file
-#         if verify_password(password, team.hashed_password):
-#             st.session_state["authenticated"] = True
-#             st.session_state["current_user"] = team.team_name
-            
-#             # Optional: Generate token if you need it for API calls later
-#             token = create_access_token(team.team_id)
-#             st.session_state["token"] = token
-#             return True
-#         else:
-#             st.error("Incorrect password.")
-#             return False
-#     except Exception as e:
-#         st.error(f"Login Error: {e}")
-#         return False
-#     finally:
-#         db.close() # Always close the session
+def attempt_login(team_id, password):
+    req = requests.post(
+        f"{API_BASE}/teams/sign_in",
+        json={
+            "team_id" : team_id,
+            "password" : password
+        },
+        timeout=30
+    )
+    req.raise_for_status()
+    return req.json()["access_token"]
+
+# SAMPLE ACCOUNT
+# {
+#     "team_id": "UMD-2026-11",
+#     "team_name": "test",
+#     "industry": "Technology",
+#     "password": "testing_password_11"
+# }
 
 # # 3. LOGIN SCREEN 
-# def login_page():
-#     # Centering strategy using columns
-#     c1, c2, c3 = st.columns([1, 2, 1])
+def login_page():
+    # Centering strategy using columns
+    c1, c2, c3 = st.columns([1, 2, 1])
     
-#     with c2:
-#         #adds some space at the top of the login box what unsafe_allow_html=True does is allow html code to be used in streamlit
-#         st.markdown("<br><br>", unsafe_allow_html=True)  
-#         st.markdown('<div class="login-container">', unsafe_allow_html=True)
-#         st.title("I-Corps Login")
-#         st.write("Please sign in to access the dashboard.")
+    with c2:
+        #adds some space at the top of the login box what unsafe_allow_html=True does is allow html code to be used in streamlit
+        st.markdown("<br><br>", unsafe_allow_html=True)  
+        st.markdown('<div class="login-container">', unsafe_allow_html=True)
+        st.title("I-Corps Login")
+        st.write("Please sign in to access the dashboard.")
         
-#         username_input = st.text_input("Team Name")
-#         password_input = st.text_input("Password", type="password")
+        username_input = st.text_input("Team Name")
+        password_input = st.text_input("Password", type="password")
         
-#         if st.button("Login", key="login_btn"):
-#             if attempt_login(username_input, password_input):
-#                 st.rerun() # Reload to show dashboard
+        if st.button("Login", key="login_btn"):
+            try :
+                token = attempt_login(username_input, password_input)
+                st.session_state["access_token"] = token
+                st.session_state["authenticated"] = True
+                st.session_state["current_user"] = username_input
+                st.rerun() # Reload to show dashboard
+            except Exception as e:
+                st.write("login failed")
         
-#         st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 def main_dashboard():     
 
@@ -129,11 +126,11 @@ def main_dashboard():
 
 
 # # --- 5. CONTROL FLOW ---
-# if not st.session_state["authenticated"]:
-#     login_page()
-# else:
-#     main_dashboard()
-main_dashboard()
+if not st.session_state["authenticated"]:
+    login_page()
+else:
+    main_dashboard()
+# main_dashboard()
 
 
 
