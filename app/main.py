@@ -2,13 +2,13 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.core.db.database import engine, get_db
-# from app.storage.s3 import ensure_bucket_exists
+from app.storage.s3 import ensure_bucket_exists
 
 # importing routes
 from app.api.endpoints.teams import teams_router as teams_router
 from app.api.endpoints.hypothesis_evaluation import evaluation_router as hypothesis_router 
 from app.api.endpoints.interviewee_profile import interviewee_router as interviewee_router 
-
+from app.api.endpoints.interview_evaluation import interview_evaluation_router as interview_eval_router
 
 
 # from app.storage.init import ensure_bucket_exists
@@ -21,6 +21,7 @@ app = FastAPI(title="Interview Info App API")
 app.include_router(teams_router)
 app.include_router(hypothesis_router)
 app.include_router(interviewee_router)
+app.include_router(interview_eval_router)
 
 with engine.connect() as conn:
     # if the database does not already have the capability, adds the app that allows for vector computation abilities
@@ -31,9 +32,9 @@ with engine.connect() as conn:
 
 # checks to make sure the s3 bucket for interview data storage exist and was not deleted somehow
 # this can be removed once we switch to AWS in prod
-# @app.on_event("startup")
-# def startup():
-#     ensure_bucket_exists()
+@app.on_event("startup")
+def startup():
+    ensure_bucket_exists()
 
 # these are a couple of basic routes used to test the API and make sure that the database is connected properly
 @app.get("/")

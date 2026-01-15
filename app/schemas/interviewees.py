@@ -8,6 +8,8 @@ class ExperienceLevel(str, Enum):
     SENIOR = "Senior"
     EXECUTIVE = "Executive"
 
+# real interviewee schemas:
+
 # 1. The base data for an interviewee (The "Persona")
 class IntervieweeBase(BaseModel):
     team_id : str
@@ -37,3 +39,22 @@ class IntervieweeEvaluationResponse(IntervieweeBase):
 # 4. Used for the GET /relevant_customers response
 class RelevantIntervieweesList(BaseModel):
     relevant_customers: List[IntervieweeBase]
+    
+# ai generated schemas:
+class GeneratedPersona(BaseModel):
+
+    company_type: str = Field(alias="Company Type")
+    market_segment: str = Field(alias="Market Segment")
+    industry: str = Field(alias="Industry")
+    position: str = Field(alias="Position")
+    role: str = Field(alias="Role")
+    outreach_methods: str = Field(alias="Recommended Outreach Methods")
+
+    
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True
+    )
+
+class RelevantIntervieweesList(BaseModel):
+    relevant_customers: List[GeneratedPersona]

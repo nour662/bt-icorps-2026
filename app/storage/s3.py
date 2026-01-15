@@ -1,9 +1,10 @@
-# import boto3
-# from botocore.config import Config
-# from app.core.config import settings
+import boto3
+from botocore.config import Config
+from app.core.config import settings
 
 # initializing the s3 client
 def get_s3_client():
+    print("S3_ENDPOINT runtime:", settings.S3_ENDPOINT)
     client = boto3.client(
         "s3",
         endpoint_url=settings.S3_ENDPOINT,
@@ -12,15 +13,16 @@ def get_s3_client():
         region_name="us-east-1",
         config=Config(signature_version="s3v4"),
     )
-#     return client
+    return client
 
 
 def ensure_bucket_exists():
     s3 = get_s3_client()
     bucket = settings.S3_BUCKET_NAME
     bucket_names = []
-    for b in s3.list_buckets().get("Buckets", []):
-        bucket_names.append(b["Name"])
+    if (s3.list_buckets() != None):
+        for b in s3.list_buckets().get("Buckets", []):
+            bucket_names.append(b["Name"])
     if bucket not in bucket_names:
         s3.create_bucket(Bucket=bucket)
 

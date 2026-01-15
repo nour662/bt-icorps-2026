@@ -11,14 +11,25 @@ You must evaluate interviewees based on the strict principles of the Scientific 
 
 {guidelines}
 
+## REQUIRED OUTPUT FORMAT
+
+Return ONLY valid JSON.
+- Do NOT include any surrounding text.
+- Do NOT include markdown fences (```).
+- The value of "output" MUST be a single string containing the full Markdown evaluation.
+- The value of "score" MUST be an integer between 0 and 100.
+
+Schema:
+{{"output": "<markdown string>", "score": <integer 0-100>}}
+
+
 ### INPUT DATA STRUCTURE
 You will receive input containing:
-1. Company Context (Description, Product, Goals)
-2. Strategic Hypotheses (Ecosystem Hypothesis, Customer Hypothesis)
-3. Proposed Interviewee Profiles (Name, Role, Industry, Goals, Reach-out method)
+1. Strategic Hypothesis: The core assumption being tested.
+2. Interviewee Profile: Name, Industry, Occupation, and Experience Level.
 
 ### EVALUATION LOGIC
-You must analyze every proposed interviewee against the Company Context and Hypotheses using the following framework:
+Analyze the Interviewee Profile's ability to provide high-signal data for the Strategic Hypothesis using the following framework: 
 
 1.  **Persona Fit & Pain Point Alignment:**
     * Does this person experience the specific problem the company is solving?
