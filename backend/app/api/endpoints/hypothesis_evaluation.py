@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from celery.result import AsyncResult
 from app import models
 from app.core.celery_app import celery_app
-
+from typing import List
 
 evaluation_router = APIRouter(
     prefix='/hypothesis', tags=["Hypothesis"]
@@ -76,9 +76,10 @@ async def get_hypothesis_results(hypothesis_id: int, db: Session = Depends(get_d
     
 
 @evaluation_router.get("/dropdown", response_model=List[HypothesisDropdown]) # only send id and text and transform to JSON
-async def get_hypotheses_for_dropdown(db: Session = Depends(get_db), team_id : int):
+async def get_hypotheses_for_dropdown(team_id : str, db: Session = Depends(get_db)):
     results = db.query(models.Hypotheses).filter(
-        models.Hypotheses.team_id == team.id
+        models.Hypotheses.team_id == team_id
     ).all()
     
-    return results
+    return [{"hypothesis_id": h.id, "hypothesis": h.hypothesis} for h in results] # generate personas needs hyp id, text for output
+    
