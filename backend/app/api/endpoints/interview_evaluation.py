@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.core.db.database import get_db
 from app import models
 from app.core.config import settings
-# from app.worker import evaluate_interviews
+from app.worker.interview_evaluation import evaluate_interview_task
 from app.schemas.files import PresignRequest, PresignResponse
 from app.schemas.interviews import InterviewEvaluationRequest, InterviewEvaluationResponse
 from sqlalchemy.orm import Session
@@ -13,6 +13,7 @@ from app.storage.s3 import get_s3_client
 from uuid import uuid4
 import boto3
 from botocore.config import Config
+from celery.result import AsyncResult
     
 interview_evaluation_router = APIRouter(
     prefix='/interview', tags=["Interview"]
@@ -71,7 +72,7 @@ async def get_presigned_url(req: PresignRequest, team=Depends(get_current_team))
 
 
 @interview_evaluation_router.post("/evaluate_interview")
-async def evaluate_interview(data = InterviewEvaluationRequest, db : Session = Depends(get_db), team=Depends(get_current_team)):
+async def evaluate_interview(data : InterviewEvaluationRequest, db : Session = Depends(get_db), team=Depends(get_current_team)):
     # need to first add the interview to the database
     # pass in the hypothesis id and the interview id and team id
     new_interview = Interviews(
@@ -83,7 +84,7 @@ async def evaluate_interview(data = InterviewEvaluationRequest, db : Session = D
     db.add(new_interview)
     db.commit()
     task = evaluate_interview_task.delay(
-        hypothesis_id = hypothesis_addition.id,
+        hypothesis_id = data.hypothesis_id,
         team_id = team.id,
         interview_id = new_interview.id
     )

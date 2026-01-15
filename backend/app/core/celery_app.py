@@ -14,7 +14,8 @@ celery_app = Celery(
     include=[
         "app.worker.hyp_evaluation",
         "app.worker.user_interviewee_evaluation",
-        "app.worker.interviewee_evaluation"
+        "app.worker.interviewee_evaluation",
+        "app.worker.interview_evaluation"
     ]
 )
 

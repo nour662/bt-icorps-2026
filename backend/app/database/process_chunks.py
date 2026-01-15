@@ -56,7 +56,7 @@ def process_chunks_to_vectors(chunks):
 
     return vectors
 
-def add_past_data_chunks_to_db(all_chunks, all_vectors, past_data_id):
+def add_past_data_chunks_to_db(all_chunks, all_vectors, past_data_id, db):
     chunk_objects = []
     for chunk, vector in zip(all_chunks, all_vectors):
         # use zip to pair all_chunks and all_vectors 
@@ -76,7 +76,7 @@ def add_past_data_chunks_to_db(all_chunks, all_vectors, past_data_id):
         db.rollback() # if error, remove all chunks added to database
         print(f"Error: {e}")
     
-def add_interview_data_chunks_to_db(all_chunks, all_vectors, interview_id):
+def add_interview_data_chunks_to_db(all_chunks, all_vectors, interview_id, db):
     chunk_objects = []
     for chunk, vector in zip(all_chunks, all_vectors):
         # use zip to pair all_chunks and all_vectors 

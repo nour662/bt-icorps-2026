@@ -1,6 +1,11 @@
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 def top_k_chunks_past_data(db: Session, query_embedding, k):
+    if hasattr(query_embedding, "tolist"):
+        query_embedding.tolist()
+    else:
+        for x in query_embedding:
+            float(x)
     sql = """
         SELECT id, content
         FROM past_document_chunks
@@ -16,6 +21,11 @@ def top_k_chunks_past_data(db: Session, query_embedding, k):
     return rows
 
 def top_k_chunks_interview_data(db: Session, query_embedding, k, interview_id):
+    if hasattr(query_embedding, "tolist"):
+        query_embedding.tolist()
+    else:
+        for x in query_embedding:
+            float(x)
     sql = """
         SELECT id, content
         FROM document_chunks
