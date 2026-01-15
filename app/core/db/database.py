@@ -8,7 +8,7 @@ from app.models.team_table import Team
 from app.models.interviewees_table import Interviewees
 from app.models.hypotheses_table import Hypotheses
 from app.models.interviews_table import Interviews
-from app.models.document_chunk_table import DocumentChunk
+from app.models.interview_document_chunk_table import DocumentChunk
 from app.models.past_data_table import PastData
 from app.models.ai_interviewees_table import AI_Interviewees
 

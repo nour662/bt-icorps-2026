@@ -6,10 +6,8 @@ from app.core.db.base import Base
 class DocumentChunk(Base):
     __tablename__ = "document_chunks"
     id = Column(Integer, primary_key=True)
-    team_id = Column(String, ForeignKey("teams.id")) # foreign key
     interview_id = Column(Integer, ForeignKey("interviews.id"))
     
-    s3_key = Column(String, index=True)
     content = Column(Text)
     embedding = Column(Vector(1536)) 
 

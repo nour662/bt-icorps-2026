@@ -7,6 +7,7 @@ class Interviewees(Base):
     __tablename__ = "interviewees"
     id = Column(Integer, primary_key=True) # automatically creates primary key
     team_id = Column(String, ForeignKey("teams.id")) # foreign key
+    hypothesis_id = Column(Integer, ForeignKey("hypotheses.id"))
 
     customer_name = Column(String)
     customer_industry = Column(Text)

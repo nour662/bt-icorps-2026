@@ -1,7 +1,7 @@
 """fix typo in position column
 
 Revision ID: 9e4daabb4a17
-Revises: 51e1ef9519a0
+Revises: 637798a9b801
 Create Date: 2026-01-14 16:30:20.786098
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '9e4daabb4a17'
-down_revision: Union[str, Sequence[str], None] = '51e1ef9519a0'
+down_revision: Union[str, Sequence[str], None] = '637798a9b801'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
