@@ -9,12 +9,12 @@ from langchain_core.output_parsers import StrOutputParser
 # db models: 
 from app.models.interviews_table import Interviews
 from app.models.hypotheses_table import Hypotheses
-from app.models.document_chunk_table import DocumentChunk
+from app.models.interview_document_chunk_table import DocumentChunk
 from app.models.team_table import Team
 
 # file imports: 
 from app.storage.s3 import load_pdf_from_s3
-from app.database.process_chunks import process_chunks
+from app.database.process_chunks import process_file_to_chunks, process_chunks_to_vectors, add_interview_data_chunks_to_db
 
 # rag usage
 from .rag_functions import top_k_chunks_interview_data, format_rows_for_prompt
@@ -29,10 +29,17 @@ def evaluate_interview_task(self, hypothesis_id : int, team_id : str, interview_
     db = SessionLocal()
 
     interview = db.query(Interviews).filter(Interviews.id == interview_id)
+
+    # extracting the bytes from the interview transcript in s3
     s3_key = interview.s3_key
     file_bytes = load_pdf_from_s3(s3_key)
-    process_chunks(db, interview_id, file_bytes, s3_key)
 
+    # chunking and embedding the file and inserting it into db
+    text_chunks = process_file_to_chunks(file_bytes, 600)
+    vector_chunks = process_chunks_to_vectors(text_chunks)
+    add_interview_data_to_db(text_chunks, vector_chunks, interview_id)
+
+    # gets the hypothesis embedding and text and runs RAG on the embedding to find the most similar portions of the transcript
     hypothesis = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id)
     team = db.query(Team).filter(Team.id == team_id)
     hypothesis_embedding = hypothesis.hypothesis_embedding
@@ -40,13 +47,15 @@ def evaluate_interview_task(self, hypothesis_id : int, team_id : str, interview_
 
     rag_rows = top_k_chunks_interview_data(db, hypothesis_embedding, 5, interview_id)
 
+    # sets up the llm using langchain
     llm = ChatOpenAI(
        model="gpt-4o", 
        api_key=settings.OPENAI_API_KEY,
        base_url=settings.OPENAI_BASE_URL
     )
     rag_excerpts = format_rows_for_prompt(rag_rows)
-    try: # need to still update prompt to match these guidelines
+
+    try: 
         prompt_inpupts = {
             "industry" : team.idustry,
             "hypothesis" : hypothesis_text,
@@ -55,9 +64,13 @@ def evaluate_interview_task(self, hypothesis_id : int, team_id : str, interview_
         prompt = INTERVIEW_EVALUATION_PROMPT.format_messages(**prompt_inputs)
         response = llm.invoke(prompt)
         response = response.content
+
+        # extracts information in json format
         response_json = json.loads(response)
         summary = response_json["summary"]
         evaluation = response_json["evaluation"]
+
+        # adds evauation information to db under the interview_id
         interview.interviews_output = evaluation
         interview.interviews_summary = summary
         interview.evaluated = True
