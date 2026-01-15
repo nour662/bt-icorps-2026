@@ -15,7 +15,7 @@ sidebar()
 # from app.api.endpoints.auth_helper.password_security import verify_password
 # from app.api.endpoints.auth_helper import create_access_token
 
-#TO RUN the file to do: streamlit run streamlit_app.py
+#TO RUN the file to do: streamlit run frontend/streamlit_app.py
 
 
 st.set_page_config(
