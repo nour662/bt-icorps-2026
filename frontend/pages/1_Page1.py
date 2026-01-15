@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from theme import i_corp_theme, sidebar
 from css import apply_css
 import streamlit as st
-# from backend.app.worker.hyp_evaluation import evaluate_hypothesis_task
-# from backend.app.core.db import SessionLocal
+import requests
+from streamlit_app import API_BASE
 
 i_corp_theme()  
 apply_css()       
@@ -25,7 +25,7 @@ with container:
     #Form to fill in information such as hypothesis type and hypothesis
     st.form_key = "hypothesis_form"
     with st.form(key=st.form_key):
-        hyp_selection = st.selectbox("Select your Hypothesis Type here:", ["","Ecosystem Hypothesis", "Customer Hypothesis"], key="hypothesis_type")
+        hyp_selection = st.selectbox("Select your Hypothesis Type here:", ["","Ecosystem", "Customer"], key="hypothesis_type")
         hyp_details = st.text_area("Enter your Hypothesis here:", key="hypothesis_description")
         submitted = st.form_submit_button(label="Evaluate Hypothesis")
 
@@ -46,35 +46,48 @@ with container:
                 with st.spinner("Analyzing your Hypothesis"):
 
                     #gets the current session that is in right now 
-                    current_team = st.session_state.get("current_user", "test_team")
-
-                    # try: 
-                    #     result = evaluate_hypothesis_task(
-                    #     hypothesis_id=1, 
-                    #     hypothesis_text=hyp_details, 
-                    #     hypothesis_type=hyp_selection, 
-                    #     team_id=current_team
-                    #     )
-
-
-                        # score = result.get('score', 0) 
-                        # feedback_text = result.get('feedback', "No feedback provided.")
-                        # st.success("Analysis Complete!")
-
-
-                    # except Exception as e: 
-                    #     st.error(f"Backend Error: {e}")
-                    #     score = 0
-                    #     feedback_text = "Error occurred."
-                    # finnaly:
-                    # # db.close()
+                    current_team = st.session_state.get("current_user")
+                    req = requests.post(
+                        f"{API_BASE}/hypothesis/evaluate",
+                        json={
+                            "team_id" : current_team,
+                            "hypothesis_type" : hyp_selection,
+                            "hypothesis" : hyp_details
+                        },
+                        timeout=30
+                    )
+                    req.raise_for_status()
+                    res = req.json()
+                    status = res["status"]
+                    task_id = res["task_id"]
+                    hypothesis_id = res["hypothesis_id"]
+                    while (status != "SUCCESS"):
+                        req = requests.get(
+                        f"{API_BASE}/hypothesis/status/{task_id}",
+                        timeout=30
+                        )
+                        req.raise_for_status()
+                        res = req.json()
+                        status = res["status"]
+                    req = requests.get(
+                        f"{API_BASE}/hypothesis/results/{hypothesis_id}",
+                        timeout=30
+                    )
+                    req.raise_for_status()
+                    output_dict = req.json()
+                    score = output_dict["hypotheses_output_score"]
+                    output = output_dict["hypotheses_output"]
+                    if score >= 80:
+                        st.success("You have a Strong Hypothesis")
+                        # with st.spinner("Generating user personas..."):
+                        # personas = generate_personas_function(h_desc)
+                        # # st.write(personas)
+                        #     pass
+                        st.write(output)
+                    else:
+                        st.write("You have a Weak Hypothesis")
+                        st.write(output)
+                    
                                 
             #have the score show colors on a wheel like red if its low yellow if its like 65-79 and light green then green then dark green for 80-89 90-99 and 100
-            # if score >= 80:
-            #     st.success("You have a Strong Hypothesis")
-            #     with st.spinner("Generating user personas..."):
-                # personas = generate_personas_function(h_desc)
-            #     # st.write(personas)
-            #         pass
-            # else:
-            #     st.feedback("You have a Weak Hypothesis")
+           
