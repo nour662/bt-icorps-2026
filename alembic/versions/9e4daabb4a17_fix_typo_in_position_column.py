@@ -24,9 +24,16 @@ def upgrade() -> None:
     op.add_column('ai_interviewees', sa.Column('position', sa.String(), nullable=True))
     op.drop_column('ai_interviewees', 'poition')
     op.drop_column('interviewees', 'customer_name')
-    op.add_column('interviews', sa.Column('hypothesis_id', sa.String(), nullable=True))
+    op.add_column('interviews', sa.Column('hypothesis_id', sa.Integer(), nullable=True))
     op.add_column('interviews', sa.Column('interviews_summary', sa.Text(), nullable=True))
-    op.create_foreign_key(None, 'interviews', 'hypotheses', ['hypothesis_id'], ['id'])
+    op.create_foreign_key(
+    "interviews_hypothesis_id_fkey",
+    "interviews",
+    "hypotheses",
+    ["hypothesis_id"],
+    ["id"],
+    ondelete="SET NULL",
+    )
     op.drop_column('interviews', 'interviewee_name')
     # ### end Alembic commands ###
 

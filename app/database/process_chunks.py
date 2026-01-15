@@ -6,7 +6,7 @@ from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv #dotenv to read from env
 from sqlalchemy.orm import Session
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from app.models.document_chunk_table import DocumentChunk 
+from app.models.document_chunk_table import DocumentChunk
 
 def process_chunks(db: Session, interview_id: int, file_bytes : bytes, key: str):
     all_chunks = process_file_to_chunks(file_bytes)
