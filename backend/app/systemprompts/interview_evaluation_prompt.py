@@ -18,6 +18,7 @@ You must evaluate the evidence against these four critical phases:
 2. **DIVERGENT:** understand scope of person’s responsibilities (job searching such as: Where does our target task or job appear in their process? What other tasks or duties must they complete apart from our target? Is our target job a priority for improvement…or are they focused more on improving other things?)
 3. **CONVERGENT:** focus on your target job / concept (Focusing on your interest area: How do they get the “specific task or job” done today? How important is it compared to other jobs? How satisfied are they with this approach or solution? What “decision criteria” would they use to choose ANY different approach (i.e., how would they define a “better” solution)?)
 4. **CLOSING:** what else? (Confirm key insights (as necessary), Allow person to add anything else that comes to mind, Ask for references and possible warm introductions, Keep the door open (can we come back to you in the future))
+
 ## CONTEXT
 I-Corps teams conduct interviews to test Ecosystem and Customer Hypotheses.
 You will be given:
@@ -99,7 +100,7 @@ Where:
 - **output** includes:
   - hypothesis ↔ interview alignment
   - strengths and weaknesses of questions
-  - extracted interview insights
+  - extracted interview insights like pain points and value propositions
   - inferred customer segment and fit assessment
 - **summary** is a brief, neutral judgment of interview quality and learning value
 
