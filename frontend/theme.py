@@ -8,7 +8,7 @@ def i_corp_theme():
         page_title="I-Corps Project Dashboard",
         page_icon="🚀",
         layout="wide",
-        initial_sidebar_state="collapsed"
+        initial_sidebar_state="auto"
     )
 
 # def main_dashboard():
