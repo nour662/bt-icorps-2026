@@ -19,6 +19,23 @@ async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = D
     hypothesis_type = data.hypothesis_type
     hypothesis = data.hypothesis
     
+    # check for duplicates
+    from sqlalchemy import func
+    existing_hyp = db.query(models.Hypotheses).filter(
+        models.Hypotheses.team_id == team_id,
+        models.Hypotheses.hyp_type == hypothesis_type,
+        func.trim(models.Hypotheses.hypothesis) == hypothesis.strip(),
+        models.Hypotheses.evaluated == True  
+    ).first()
+
+    if existing_hyp:
+        print(f"Returning existing Hypothesis ID {existing_hyp.id}")
+        return {
+            "task_id" : "COMPLETED_EXISTING", 
+            "status" : "SUCCESS",
+            "hypothesis_id" : existing_hyp.id,
+        }
+    
     # adding the hypothesis to the database
 
     hypothesis_addition = models.Hypotheses(
@@ -47,6 +64,10 @@ async def evaluate_hypothesis(data: HypothesisEvaluationRequest, db: Session = D
 # route to check on the status of the hypothesis evaluation in celery
 @evaluation_router.get("/status/{task_id}")
 async def get_status(task_id : str):
+    # if hyp exists already
+    if task_id.startswith("COMPLETED_"):
+        return {"task_id": task_id, "status": "SUCCESS"}
+    
     result = celery_app.AsyncResult(task_id)
     return {
         "task_id" : task_id,

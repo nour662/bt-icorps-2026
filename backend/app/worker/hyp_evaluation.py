@@ -35,6 +35,27 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
     print(f" Worker check for Hypothesis ID: {hypothesis_id}")
     
     db = SessionLocal()
+    
+    # check for duplicates
+    duplicate = db.query(Hypotheses).filter(
+        Hypotheses.team_id == team_id,
+        Hypotheses.hyp_type == hypothesis_type,
+        func.trim(Hypotheses.hypothesis) == hypothesis_text.strip(),
+        Hypotheses.evaluated == True,
+        Hypotheses.id != hypothesis_id  # Don't match the current row
+    ).first()
+
+    if duplicate:
+        print(f"Duplicate found! Cloning results from Hypo {duplicate.id}")
+        record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
+        if record:
+            record.hypotheses_output = duplicate.hypotheses_output
+            record.hypotheses_output_score = duplicate.hypotheses_output_score
+            record.evaluated = True
+            db.commit()
+        db.close()
+        return
+    
     embedding = embed_hypothesis(hypothesis_id, hypothesis_text, db)
     
     # evaluate customer hypothesis against current ecosystem
@@ -51,9 +72,11 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
         SIMILARITY_THRESHOLD = 0.7
         print(f"The similarity is: {round(ecosystem_matches[0].similarity, 2)} \n")
         if not ecosystem_matches or ecosystem_matches[0].similarity < SIMILARITY_THRESHOLD:
-            hypotheses_output = "No Match Found: This customer hypothesis does not align with your current ecosystem."
-            hypotheses_output_score = 0
-            evaluated = True
+            record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
+            record.hypotheses_output = "No Match Found: This customer hypothesis does not align with your current ecosystem."
+            record.hypotheses_output_score = 0
+            record.evaluated = True
+            
             db.commit()
             return "No Ecosystem Matches"
         ecosystem_context = "\n".join([

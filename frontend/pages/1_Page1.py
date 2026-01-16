@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from theme import i_corp_theme, sidebar
 from css import apply_css
 import streamlit as st
+import plotly as px
+import plotly.graph_objects as go
 import requests
 from streamlit_app import API_BASE
 
@@ -62,6 +64,9 @@ with container:
                     task_id = res["task_id"]
                     hypothesis_id = res["hypothesis_id"]
                     while (status != "SUCCESS"):
+                        #This slows it down 
+                        time.sleep(2.5)
+
                         req = requests.get(
                         f"{API_BASE}/hypothesis/status/{task_id}",
                         timeout=30
@@ -77,8 +82,55 @@ with container:
                     output_dict = req.json()
                     score = output_dict["hypotheses_output_score"]
                     output = output_dict["hypotheses_output"]
+
+ # 3. Display the Gauge Chart (The "Wheel")
+                    st.markdown("### Evaluation Score")
+                    
+                    # Create columns to center the chart and make it "half size"
+                    # The middle column (col_center) is 2 parts, giving it roughly 50% width
+                    col_left, col_center, col_right = st.columns([1, 2, 1])
+                    
+                    with col_center:
+                        fig = go.Figure(go.Indicator(
+                            mode = "gauge+number",
+                            value = score,
+                            domain = {'x': [0, 1], 'y': [0, 1]},
+                            title = {'text': "Confidence Score", 'font': {'size': 20, 'family': "Roboto"}},
+                            number = {'font': {'size': 40, 'family': "Montserrat", 'color': "#262626"}},
+                            gauge = {
+                                'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "white"},
+                                # Change bar color to I-Corps Navy so it fits the theme 
+                                # and doesn't look like a generic "black bar"
+                                'bar': {'color': "#213F6B", 'thickness': 0.25}, 
+                                'bgcolor': "white",
+                                'borderwidth': 2,
+                                'bordercolor': "white",
+                                'steps': [
+                                    {'range': [0, 39], 'color': "#AD0606"},   # Dark Red
+                                    {'range': [40, 64], 'color': "#FF4B4B"},  # Red
+                                    {'range': [65, 80], 'color': "#FACA2B"},  # Yellow
+                                    {'range': [81, 89], 'color': "#90EE90"},  # Light Green
+                                    {'range': [90, 100], 'color': "#008000"}  # Dark Green
+                                ],
+                                'threshold': {
+                                    'line': {'color': "red", 'width': 4},
+                                    'thickness': 0.75,
+                                    'value': 80
+                                }
+                            }
+                        ))
+                        # Reduce margin and height to make it compact
+                        fig.update_layout(
+                            height=250, 
+                            margin=dict(l=20, r=20, t=50, b=20),
+                            paper_bgcolor="rgba(0,0,0,0)", # Transparent background
+                            font={'family': "Montserrat"}
+                        )
+                        
+                        st.plotly_chart(fig, use_container_width=True)
+
                     if score >= 80:
-                        st.success("You have a Strong Hypothesis")
+                        st.success(f"You have a Strong Hypothesis! (Score: {score})") #not sure if that is right or needed
                         # with st.spinner("Generating user personas..."):
                         # personas = generate_personas_function(h_desc)
                         # # st.write(personas)
@@ -87,8 +139,4 @@ with container:
                     else:
                         st.write("You have a Weak Hypothesis")
                         st.write(output)
-    
-                    
-                                
-            #have the score show colors on a wheel like red if its low yellow if its like 65-79 and light green then green then dark green for 80-89 90-99 and 100
-           
+                               
