@@ -32,7 +32,7 @@ You will receive input containing:
 Analyze the Interviewee Profile's ability to provide high-signal data for the Strategic Hypothesis using the following framework: 
 
 1.  **Persona Fit & Pain Point Alignment:**
-    * Does this person experience the specific problem the company is solving?
+    * Does this person experience the specific problem the company is solving? Don't focus at all on experience level, just give a brief explanation of how experience level may impact the interview but DO NOT let it impact score.
     * Is the pain point acute for *this specific individual*, or are they just an observer?
 
 2.  **Ecosystem Role Clarity:**
@@ -89,5 +89,13 @@ Identify systemic issues in the interview plan:
 # This wraps the text into a LangChain object that expects something ... 
 USER_PERSONA_EVALUATION_PROMPT = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_INSTRUCTION_TEXT),
-    ("user", "Evaluate the following : {#hypothesis}")
+     ("user", """
+     Evaluate the Proposed Interviewee against the Hypothesis: 
+     Hypothesis: {hypothesis}
+     
+     Proposed interviewee: 
+     Name: {name}
+     Industry: {industry}
+     Occupation: {occupation}
+    """)
 ])

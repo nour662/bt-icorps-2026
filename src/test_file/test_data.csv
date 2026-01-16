@@ -1,0 +1,34 @@
+team_ID,team_name,industry,password,ecosystem_hypothesis,customer_hypothesis,customer_industry,customer_occupation,customer_name,interview_filename
+IC-0592,,,,,,,,,
+IC-1765,ILATO,Government; Defense; and Aerospace,IC-1765,"A customer Fire Chief or Incident Commander performs deploys specific actions robotic support units to assess danger zones, locate victims, and deliver medical aid without risking responder safety. ","A customer Fire Chief or Incident Commander prioritizes specific variables responders’ safety over other variables response time.
+","Fire Department",Firefighter (Urban/Structural),"Moore, John",https://docs.google.com/document/d/1e5DVohGeYJ7GhP-RMHtDUmaEygemwLzawRCUsBPB-Ws/edit?usp=sharing
+IC-1765,ILATO,Government; Defense; and Aerospace,IC-1765,A customer Hospital Emergency Preparedness Director performs in planning specific actions in integration of robotic assistance into trauma intake for overflow or off-site triage during surge events.,A customer FEMA Field Operations Director prioritizes specific variables coverage and coordination over other variables device cost or procurement delays.,Healthcare Institution ,Oncology Register Nurse,"Williams, Sarah ",https://drive.google.com/file/d/13iwiV2Uxo873Z2tn2SqHnoE-i697vunu/view?usp=sharing
+IC-1516,Monolith LLC,Agriculture; Aquaculture,IC-1516,"A marine biologist at a university performs  marine biology research on various organisms 
+","Universities prioritize novel research capabilities over cost
+","Director, Global Center for Aquatic Health and Food Security",Professor,Mark Lawrence,
+IC-1761,BreathAssist,Biotechnology; Medical Devices,IC-1761,First responders provide rescue breaths with a bag valve mask during respiratory arrest emergencies. They prioritize patient safety and improving health outcomes.,First responders prioritize patient safety and improving health outcomes over cost.,First Responder,Firefighter/Paramedic and U.S. Forest Service Medical Unit Leader,Kris Morgan,https://drive.google.com/file/d/148GN6na9TRCtFBDVgBbRO11moiRAfy7w/view?usp=sharing
+IC-1713,STRATPATH AI,Education; Youth,IC-1713,Faculty assigns cases and evaluates student performance providing personalised feedback,"Faculty prioritizes specific variables providing personalised feedback, comprehensive assessment of assignments over other variables time, human limitations and biases",Marketing,Professor ,Rebecca Ratner,
+IC-0667,Mindful Masters,Education; Youth,IC-0667,"Job to be Done: Oversee and implement school-wide programs, ensuring alignment with educational standards and goals.
+Motivation: School administrators aim to improve overall student outcomes and uphold the school’s reputation.
+Reporting Structure: School administrators report to the School District or Superintendent.
+Motivation: The Superintendent wants to ensure the district meets educational benchmarks and maintains high standards of learning.","A Principal prioritizes students’ academic, emotional, and social wellness over administrative efficiency and parental demands when choosing programs to implement in the school.
+",Education - MS,Principal,Robynne Prince,
+IC-1394,Esurgi Inc.,Biotechnology; Medical Devices,IC-1394,A physiotherapist plans and executes treatments to help patients with chronic low back pain,"A physiotherapist prioritizes efficiency (minimal supervision) and improved patient outcomes over cost
+",PT clinics,Owner and PT,Annie Koslow,
+IC-1408,TalkScript,"Deep Tech (STEM research, new technology, i.e. Blockchain, Quantum, New discovery, etc.)",IC-1408,A Software Developer/Engineer (SDE/SWE) pushes code to codebase which is approved by a senior first,"A Software Engineer with an impairment pains over the use of screen readers and speech-to-text transcribers to code
+",Technology,Software Engineer,Soumya Bannerjee,
+IC-1433,LASEIT ,Community & Economic Development,IC-1433,A surgeon decides which drugs/techniques to use to best treat their patients.,"A surgeon prioritizes patient survival and outcomes over cost.
+",Healthcare Institution ,Early/ Late Oncology Clinical Development Fellow- MD and PharmD,Sona Ghorashi,
+IC-1826,ExoVerse Solutions,Biotechnology; Medical Devices,IC-1826,"A Principal Investigator oversees research projects involving extracellular vesicle isolation and enrichment.
+","A Principal Investigator prioritizes high purity and time saved in workflow over cost.
+",EV-based Therapeutics,Co-Founder and CSO,Samir El-Andaloussi,
+IC-1826,ExoVerse Solutions,Biotechnology; Medical Devices,IC-1826,"A Research Scientist conducts experiments to isolate and analyze extracellular vesicles.
+","A Researcher Using EVs for Therapeutic Applications prioritizes EV Purity and Scalability (also size depending on application such as crossing barriers in the body) over time.
+",EV-based,Researcher,Steve Pomeroy,
+IC-1853,Repelettes,Healthcare; Life Sciences,IC-1853,A sustainability or ESG leader at a consumer health brand performs packaging strategy decisions by replacing plastic bottles and aerosols in order to meet corporate sustainability commitments and retailer sustainability requirements.,A repellent brand R&D or innovation manager performs product innovation by evaluating new delivery formats in order to extend product lifecycle and remain competitive without incurring new EPA active-ingredient registration costs.,Repellent Company,"Manager, R&D",Bhavesh Shah - mani,
+IC-1858,Project Pearl,Energy; Sustainability; Environmental,IC-1858,"We believe that end users (municipal stormwater managers, restoration practitioners, and environmental operators) need to: Reduce nutrient and microplastic loads at stormwater discharge and regulated receiving-water interfaces to meet regulatory compliance targets and performance thresholds.
+","We believe customers struggle with: Improving aquatic life outcomes without expanding project scope into habitat construction or shoreline restoration
+",Environment and Sustainability,Sustainability Manager,Amy Gilder Busatti,
+IC-1858,Project Pearl,Energy; Sustainability; Environmental,IC-1858,"We believe that decision makers (municipal program directors, public works leadership, environmental services managers, and funding authorities) need to: Demonstrate measurable nutrient and microplastic reduction at regulated stormwater discharge interfaces to satisfy compliance, oversight, and accountability requirements.
+","We believe customers struggle with: Meeting nutrient and emerging contaminant (e.g., microplastic) reduction requirements using tools that produce defensible, auditable results
+",Environment and Sustainability,Executive Director,Carmen Reynolds,

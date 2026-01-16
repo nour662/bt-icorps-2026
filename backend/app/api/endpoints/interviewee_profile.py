@@ -40,7 +40,7 @@ async def check_persona(data: IntervieweeEvaluationBase, db: Session = Depends(g
         customer_name = data.name, # Maps 'name' from JSON to 'customer_name' in DB
         customer_industry = data.industry,
         customer_occupation = data.occupation,
-        customer_experience = data.experience_level,
+        #customer_experience = data.experience_level,
         customer_checked = False
     )
     
@@ -81,7 +81,7 @@ async def get_results(interviewee_id: int, db: Session = Depends(get_db)):
         "customer_name": interviewee.customer_name,
         "industry": interviewee.customer_industry,    
         "occupation": interviewee.customer_occupation, 
-        "experience_level": interviewee.customer_experience, 
+        # "experience_level": interviewee.customer_experience, 
         "customer_checked": interviewee.customer_checked,
         "customers_output": interviewee.customers_output,
         "customers_output_score": interviewee.customers_output_score

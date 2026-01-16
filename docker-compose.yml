@@ -40,6 +40,8 @@ services:
     volumes:
       #- ./app:/code/app
       - ./backend:/code # fix onedrive issues
+      - ./src/test_file:/code/src/test_file
+
     ports:
       - "8000:8000"
     env_file: .env
