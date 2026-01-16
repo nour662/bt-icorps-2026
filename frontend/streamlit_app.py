@@ -28,7 +28,7 @@ st.set_page_config(
 )
 
 
-# --- 2. AUTHENTICATION LOGIC ---
+# # --- 2. AUTHENTICATION LOGIC ---
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 if "current_user" not in st.session_state:
@@ -54,10 +54,11 @@ def attempt_login(team_id, password):
 #     "password": "testing_password_11"
 # }
 
-# 3. LOGIN SCREEN 
+# # 3. LOGIN SCREEN 
 def login_page():
     # Centering strategy using columns
     c1, c2, c3 = st.columns([1, 2, 1])
+    
     with c2:
         #adds some space at the top of the login box what unsafe_allow_html=True does is allow html code to be used in streamlit
         st.markdown("<br><br>", unsafe_allow_html=True)  
@@ -67,8 +68,7 @@ def login_page():
         
         username_input = st.text_input("Team Name")
         password_input = st.text_input("Password", type="password")
-    
-        st.markdown('</div>', unsafe_allow_html=True)
+        
         if st.button("Login", key="login_btn"):
             try :
                 token = attempt_login(username_input, password_input)
@@ -125,11 +125,6 @@ def main_dashboard():
                 st.switch_page("pages/3_Page3.py")
 
 
-# --- 5. CONTROL FLOW ---
-if not st.session_state["authenticated"]:
-    login_page()
-else:
-    main_dashboard()
 # # --- 5. CONTROL FLOW ---
 if not st.session_state["authenticated"]:
     login_page()

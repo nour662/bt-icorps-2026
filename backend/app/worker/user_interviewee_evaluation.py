@@ -41,7 +41,7 @@ def evaluate_interviewee_task(self, interviewee_id: int, hypothesis_text: str):
             "name": interviewee.customer_name,      
             "industry": interviewee.customer_industry,
             "occupation": interviewee.customer_occupation,
-            "experience": interviewee.customer_experience
+            #"experience": interviewee.customer_experience
         }
         prompt = USER_PERSONA_EVALUATION_PROMPT.format_messages(**prompt_inputs)
         response = llm.invoke(prompt)

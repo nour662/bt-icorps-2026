@@ -94,8 +94,8 @@ USER_PERSONA_EVALUATION_PROMPT = ChatPromptTemplate.from_messages([
      Hypothesis: {hypothesis}
      
      Proposed interviewee: 
+     Name: {name}
      Industry: {industry}
      Occupation: {occupation}
-     Experience: {experience}
     """)
 ])
