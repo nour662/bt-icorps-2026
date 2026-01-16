@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.models.interviews_table import Interviews
 # s3 imports: 
 from app.api.endpoints.auth_helper.current_team import get_current_team
-from app.storage.s3 import get_s3_client
+from app.storage.s3 import get_s3_client, generate_presigned_url
 from uuid import uuid4
 from pathlib import Path
 import boto3
@@ -43,29 +43,10 @@ async def get_presigned_url(req: PresignRequest, team=Depends(get_current_team))
     
     
     # Using localhost for external presigned URLs
-    external_endpoint = settings.S3_ENDPOINT.replace("minio", "localhost")
-    
-    s3_external = boto3.client(
-        "s3",
-        endpoint_url=external_endpoint,
-        aws_access_key_id=settings.S3_ACCESS_KEY,
-        aws_secret_access_key=settings.S3_SECRET_KEY,
-        region_name="us-east-1",
-        config=Config(signature_version="s3v4"),
-    )
-
+    # external_endpoint = settings.S3_ENDPOINT.replace("minio", "localhost")
     safe_filename = Path(req.filename).name.replace(" ", "_")
     key=f"teams/{team.id}/{uuid4()}-{safe_filename}"
-    url = s3_external.generate_presigned_url(
-        ClientMethod="put_object",
-        Params={
-            "Bucket" : settings.S3_BUCKET_NAME,
-            "Key" : key,
-            "ContentType" : "application/pdf"
-        },
-        ExpiresIn=600 #10 mintues
-    )
-    
+    url = generate_presigned_url(key=key, content_type="application/pdf")
     response = PresignResponse(
         upload_url=url,
         object_key=key

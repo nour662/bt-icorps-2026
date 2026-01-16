@@ -4,20 +4,28 @@ from app.core.config import settings
 
 # initializing the s3 client
 def get_s3_client():
-    print("S3_ENDPOINT runtime:", settings.S3_ENDPOINT)
-    is_minio = bool(settings.S3_ENDPOINT)
-    client = boto3.client(
-        "s3",
-        endpoint_url=settings.S3_ENDPOINT or None,
-        aws_access_key_id=settings.S3_ACCESS_KEY or None,
-        aws_secret_access_key=settings.S3_SECRET_KEY or None,
-        region_name=settings.AWS_REGION,
+    # print("S3_ENDPOINT runtime:", settings.S3_ENDPOINT)
+    
+    session = boto3.Session() # since we already ran aws configure this should attach to our profile automatically
+
+    s3_client = session.client(
+        's3',
         config=Config(
-            signature_version="s3v4",
-            s3={"addressing_style" : "path"} if is_minio else None,
-        ),
+            s3={'addressing_style' : 'virtual'}
+        )
     )
-    return client
+    # client = boto3.client(
+    #     "s3",
+    #     endpoint_url=settings.S3_ENDPOINT or None,
+    #     aws_access_key_id=settings.S3_ACCESS_KEY or None,
+    #     aws_secret_access_key=settings.S3_SECRET_KEY or None,
+    #     region_name=settings.AWS_REGION,
+    #     config=Config(
+    #         signature_version="s3v4",
+    #         s3={"addressing_style" : "path"} if is_minio else None,
+    #     ),
+    # )
+    return s3_client
 
 
 def ensure_bucket_exists():
@@ -38,3 +46,16 @@ def load_pdf_from_s3(key):
     )
     text = obj["Body"].read()
     return text
+
+def generate_presigned_url(*, key: str, content_type: str, expires_in: int = 600):
+    client = get_s3_client()
+    url = client.generate_presigned_url(
+        ClientMethod="put_object",
+        Params={
+            "Bucket" : settings.S3_BUCKET_NAME,
+            "Key" : key,
+            "ContentType" : content_type
+        },
+        ExpiresIn=expires_in #10 mintues
+    )
+    return url

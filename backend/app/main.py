@@ -32,9 +32,9 @@ with engine.connect() as conn:
 
 # checks to make sure the s3 bucket for interview data storage exist and was not deleted somehow
 # this can be removed once we switch to AWS in prod
-@app.on_event("startup")
-def startup():
-    ensure_bucket_exists()
+# @app.on_event("startup")
+# def startup():
+#     ensure_bucket_exists()
 
 # these are a couple of basic routes used to test the API and make sure that the database is connected properly
 @app.get("/")

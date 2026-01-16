@@ -35,11 +35,11 @@ class Settings(BaseSettings):
     OPENAI_BASE_URL: str
     
     # OBJECT STORAGE (MINIO/S3)
-    S3_ENDPOINT: Optional[str] 
-    S3_ACCESS_KEY: str
-    S3_SECRET_KEY: str
-    S3_BUCKET_NAME: str
+    # S3_ENDPOINT: Optional[str] 
+    AWS_ACCESS_KEY_ID : str
+    AWS_SECRET_ACCESS_KEY: str
     AWS_REGION : str
+    S3_BUCKET_NAME : str
 
     # PYDANTIC SETTINGS CONFIG
     model_config = SettingsConfigDict(

@@ -13,10 +13,11 @@ services:
   db:
     image: ankane/pgvector:latest
     ports: ["5432:5432"]
+    env_file: .env
     environment:
-      POSTGRES_USER: icorps_dev_user
-      POSTGRES_PASSWORD: icorps_dev_2026
-      POSTGRES_DB: interview_info_app_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes: ["postgres_data:/var/lib/postgresql/data"]
 
   redis:
@@ -41,7 +42,6 @@ services:
       #- ./app:/code/app
       - ./backend:/code # fix onedrive issues
       - ./src/test_file:/code/src/test_file
-
     ports:
       - "8000:8000"
     env_file: .env
