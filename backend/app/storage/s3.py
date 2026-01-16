@@ -5,13 +5,17 @@ from app.core.config import settings
 # initializing the s3 client
 def get_s3_client():
     print("S3_ENDPOINT runtime:", settings.S3_ENDPOINT)
+    is_minio = bool(settings.S3_ENDPOINT)
     client = boto3.client(
         "s3",
-        endpoint_url=settings.S3_ENDPOINT,
-        aws_access_key_id=settings.S3_ACCESS_KEY,
-        aws_secret_access_key=settings.S3_SECRET_KEY,
-        region_name="us-east-1",
-        config=Config(signature_version="s3v4"),
+        endpoint_url=settings.S3_ENDPOINT or None,
+        aws_access_key_id=settings.S3_ACCESS_KEY or None,
+        aws_secret_access_key=settings.S3_SECRET_KEY or None,
+        region_name=settings.AWS_REGION,
+        config=Config(
+            signature_version="s3v4",
+            s3={"addressing_style" : "path"} if is_minio else None,
+        ),
     )
     return client
 

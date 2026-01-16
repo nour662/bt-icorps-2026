@@ -2,11 +2,11 @@ from pydantic import BaseModel, Field, ConfigDict
 from enum import Enum
 from typing import List, Optional
 
-class ExperienceLevel(str, Enum):
-    JUNIOR = "Junior"
-    MID = "Mid-Level"
-    SENIOR = "Senior"
-    EXECUTIVE = "Executive"
+# class ExperienceLevel(str, Enum):
+#     JUNIOR = "Junior"
+#     MID = "Mid-Level"
+#     SENIOR = "Senior"
+#     EXECUTIVE = "Executive"
 
 # real interviewee schemas:
 
@@ -15,14 +15,13 @@ class IntervieweeBase(BaseModel):
     team_id : str
     industry: str
     occupation: str
-    experience_level: ExperienceLevel
+    # experience_level: ExperienceLevel
 
 # 2. Used for the POST /check_persona request
 class IntervieweeEvaluationBase(IntervieweeBase):
     #team_id: str
     hypothesis_id: int
     name: str
-    interviewee_bio: str
 
 # 3. Used for the GET /results/{id} response
 # This matches your Interviewees table columns exactly
