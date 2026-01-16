@@ -11,6 +11,7 @@ from app.models.interviews_table import Interviews
 from app.api.endpoints.auth_helper.current_team import get_current_team
 from app.storage.s3 import get_s3_client
 from uuid import uuid4
+from pathlib import Path
 import boto3
 from botocore.config import Config
 from celery.result import AsyncResult
@@ -52,8 +53,9 @@ async def get_presigned_url(req: PresignRequest, team=Depends(get_current_team))
         region_name="us-east-1",
         config=Config(signature_version="s3v4"),
     )
-    
-    key=f"teams/{team.id}/{uuid4()}-{req.filename}"
+
+    safe_filename = Path(req.filename).name.replace(" ", "_")
+    key=f"teams/{team.id}/{uuid4()}-{safe_filename}"
     url = s3_external.generate_presigned_url(
         ClientMethod="put_object",
         Params={

@@ -1,7 +1,7 @@
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import computed_field
-
+from typing import Optional
 class Settings(BaseSettings):
     PROJECT_NAME: str = "bt-icorps-2026"
     DEBUG: bool = True
@@ -35,10 +35,11 @@ class Settings(BaseSettings):
     OPENAI_BASE_URL: str
     
     # OBJECT STORAGE (MINIO/S3)
-    S3_ENDPOINT: str
+    S3_ENDPOINT: Optional[str] 
     S3_ACCESS_KEY: str
     S3_SECRET_KEY: str
     S3_BUCKET_NAME: str
+    AWS_REGION : str
 
     # PYDANTIC SETTINGS CONFIG
     model_config = SettingsConfigDict(
