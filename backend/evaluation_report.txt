@@ -1,0 +1,133 @@
+=== DEPENDENCY-BASED RESEARCH REPORT ===
+Run Date: Fri Jan 16 16:24:25 2026
+Logic: Ecosystem MUST succeed before Customer is triggered.
+==================================================
+
+TEAM: None (IC-0592)
+  [ECOSYSTEM] FAILED or MISSING. Skipping Customer evaluation.
+--------------------------------------------------
+
+TEAM: ILATO (IC-1765)
+  [ECOSYSTEM] SUCCESS - Score: 75
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1765)
+
+## Hypothesis Summary
+A customer Fire Chief or Incident Commander deploys specific actions through robotic support units to assess danger zones, loca...
+--------------------------------------------------
+
+TEAM: ILATO (IC-1765)
+  [ECOSYSTEM] SUCCESS - Score: 73
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1765)
+
+## Hypothesis Summary
+A customer Hospital Emergency Preparedness Director integrates robotic assistance into trauma intake for managing overflow or o...
+--------------------------------------------------
+
+TEAM: Monolith LLC (IC-1516)
+  [ECOSYSTEM] FAILED or MISSING. Skipping Customer evaluation.
+--------------------------------------------------
+
+TEAM: BreathAssist (IC-1761)
+  [ECOSYSTEM] SUCCESS - Score: 78
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1761)
+
+## Hypothesis Summary
+First responders provide rescue breaths with a bag valve mask during respiratory arrest emergencies and prioritize patient safe...
+--------------------------------------------------
+
+TEAM: STRATPATH AI (IC-1713)
+  [ECOSYSTEM] SUCCESS - Score: 72
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1713)
+
+## Hypothesis Summary
+Faculty assigns cases and evaluates student performance, providing personalized feedback.
+
+## Evaluation Scorecard
+| Category |...
+--------------------------------------------------
+
+TEAM: Mindful Masters (IC-0667)
+  [ECOSYSTEM] SUCCESS - Score: 67
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-0667)
+
+## Hypothesis Summary
+School administrators oversee and implement school-wide programs to ensure alignment with educational standards, aiming to impr...
+--------------------------------------------------
+
+TEAM: Esurgi Inc. (IC-1394)
+  [ECOSYSTEM] SUCCESS - Score: 78
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1394)
+
+## Hypothesis Summary
+A physiotherapist plans and executes treatments to help patients with chronic low back pain.
+
+## Evaluation Scorecard
+| Categor...
+--------------------------------------------------
+
+TEAM: TalkScript (IC-1408)
+  [ECOSYSTEM] SUCCESS - Score: 85
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1408)
+
+## Hypothesis Summary
+A Software Developer/Engineer (SDE/SWE) pushes code to the codebase which is approved by a senior first.
+
+## Evaluation Scoreca...
+--------------------------------------------------
+
+TEAM: LASEIT  (IC-1433)
+  [ECOSYSTEM] SUCCESS - Score: 65
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1433)
+
+## Hypothesis Summary
+A surgeon decides which drugs/techniques to use to best treat their patients.
+
+## Evaluation Scorecard
+| Category | Score | Not...
+--------------------------------------------------
+
+TEAM: ExoVerse Solutions (IC-1826)
+  [ECOSYSTEM] SUCCESS - Score: 77
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1826)
+
+## Hypothesis Summary
+A Principal Investigator oversees research projects involving extracellular vesicle isolation and enrichment.
+
+## Evaluation Sc...
+--------------------------------------------------
+
+TEAM: ExoVerse Solutions (IC-1826)
+  [ECOSYSTEM] SUCCESS - Score: 85
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1826)
+
+## Hypothesis Summary
+A Research Scientist conducts experiments to isolate and analyze extracellular vesicles.
+
+## Evaluation Scorecard
+| Category | ...
+--------------------------------------------------
+
+TEAM: Repelettes (IC-1853)
+  [ECOSYSTEM] SUCCESS - Score: 81
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1853)
+
+## Hypothesis Summary
+A sustainability or ESG leader at a consumer health brand performs packaging strategy decisions by replacing plastic bottles an...
+--------------------------------------------------
+
+TEAM: Project Pearl (IC-1858)
+  [ECOSYSTEM] SUCCESS - Score: 74
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1858)
+
+## Hypothesis Summary
+We believe that end users, specifically municipal stormwater managers, restoration practitioners, and environmental operators, ...
+--------------------------------------------------
+
+TEAM: Project Pearl (IC-1858)
+  [ECOSYSTEM] SUCCESS - Score: 72
+  RESULT: # Hypothesis Evaluation: Ecosystem (Team IC-1858)
+
+## Hypothesis Summary
+We believe that decision-makers in relevant municipal and environmental roles need to demonstrate measurable nutrient and micro...
+--------------------------------------------------
+

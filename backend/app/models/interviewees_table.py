@@ -11,7 +11,6 @@ class Interviewees(Base):
 
     customer_name = Column(String)
     customer_industry = Column(Text)
-    customer_experience = Column(Text)
     customer_occupation = Column(Text)
     customer_checked = Column(Boolean, default=False)
     
