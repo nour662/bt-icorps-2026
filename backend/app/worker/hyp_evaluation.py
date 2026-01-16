@@ -35,6 +35,27 @@ def evaluate_hypothesis_task(self, hypothesis_id: int, hypothesis_text: str, hyp
     print(f" Worker check for Hypothesis ID: {hypothesis_id}")
     
     db = SessionLocal()
+    
+    # check for duplicates
+    duplicate = db.query(Hypotheses).filter(
+        Hypotheses.team_id == team_id,
+        Hypotheses.hyp_type == hypothesis_type,
+        func.trim(Hypotheses.hypothesis) == hypothesis_text.strip(),
+        Hypotheses.evaluated == True,
+        Hypotheses.id != hypothesis_id  # Don't match the current row
+    ).first()
+
+    if duplicate:
+        print(f"Duplicate found! Cloning results from Hypo {duplicate.id}")
+        record = db.query(Hypotheses).filter(Hypotheses.id == hypothesis_id).first()
+        if record:
+            record.hypotheses_output = duplicate.hypotheses_output
+            record.hypotheses_output_score = duplicate.hypotheses_output_score
+            record.evaluated = True
+            db.commit()
+        db.close()
+        return
+    
     embedding = embed_hypothesis(hypothesis_id, hypothesis_text, db)
     
     # evaluate customer hypothesis against current ecosystem
