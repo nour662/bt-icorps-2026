@@ -87,6 +87,7 @@ with container:
                     else:
                         st.write("You have a Weak Hypothesis")
                         st.write(output)
+    
                     
                                 
             #have the score show colors on a wheel like red if its low yellow if its like 65-79 and light green then green then dark green for 80-89 90-99 and 100

@@ -22,10 +22,10 @@ def top_k_chunks_past_data(db: Session, query_embedding, k):
 
 def top_k_chunks_interview_data(db: Session, query_embedding, k, interview_id):
     if hasattr(query_embedding, "tolist"):
-        query_embedding.tolist()
+        query_embedding = query_embedding.tolist()
     else:
         for x in query_embedding:
-            float(x)
+            query_embedding[x] = float(x)
     sql = """
         SELECT id, content
         FROM document_chunks
@@ -46,7 +46,7 @@ def top_k_chunks_interview_data(db: Session, query_embedding, k, interview_id):
 
 def format_rows_for_prompt(rows):
     if not rows: 
-        return "No relevant prior data found"
+        return "No relevant data found"
     return "\n\n".join(
         r.content for r in rows
     )

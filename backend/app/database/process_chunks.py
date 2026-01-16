@@ -90,7 +90,7 @@ def add_interview_data_chunks_to_db(all_chunks, all_vectors, interview_id, db):
     try:
         db.add_all(chunk_objects)
         db.commit()
-        print(f"Stored {len(chunk_objects)} text chunks for past data.")
+        print(f"Stored {len(chunk_objects)} text chunks for interview data.")
     except Exception as e:
         # error checking
         db.rollback() # if error, remove all chunks added to database

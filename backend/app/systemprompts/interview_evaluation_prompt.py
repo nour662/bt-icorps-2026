@@ -91,10 +91,10 @@ Do NOT include explanations outside the JSON.
 Do NOT include additional keys.
 
 Schema:
-{
+{{
   "output": "<detailed analytical evaluation>",
   "summary": "<concise 2–3 sentence executive summary>"
-}
+}}
 
 Where:
 - **output** includes:

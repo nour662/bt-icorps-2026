@@ -33,42 +33,7 @@ if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 if "current_user" not in st.session_state:
     st.session_state["current_user"] = None
-# # --- 2. AUTHENTICATION LOGIC ---
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
-if "current_user" not in st.session_state:
-    st.session_state["current_user"] = None
 
-def attempt_login(username, password):
-    """
-    Connects to your existing backend to verify credentials.
-    """
-    db = SessionLocal() # Manually open a session since we aren't in a FastAPI route
-    try:
-        # Assuming your Team model has a 'username' or 'email' field. Adjust 'team_name' as needed.
-        team = db.query(Team).filter(Team.team_name == username).first() 
-        
-        if not team:
-            st.error("Team not found.")
-            return False
-            
-        # Verify Password using your existing security file
-        if verify_password(password, team.hashed_password):
-            st.session_state["authenticated"] = True
-            st.session_state["current_user"] = team.team_name
-            
-            # Optional: Generate token if you need it for API calls later
-            token = create_access_token(team.team_id)
-            st.session_state["token"] = token
-            return True
-        else:
-            st.error("Incorrect password.")
-            return False
-    except Exception as e:
-        st.error(f"Login Error: {e}")
-        return False
-    finally:
-        db.close() # Always close the session
 def attempt_login(team_id, password):
     req = requests.post(
         f"{API_BASE}/teams/sign_in",
@@ -93,17 +58,6 @@ def attempt_login(team_id, password):
 def login_page():
     # Centering strategy using columns
     c1, c2, c3 = st.columns([1, 2, 1])
-# # 3. LOGIN SCREEN 
-def login_page():
-    # Centering strategy using columns
-    c1, c2, c3 = st.columns([1, 2, 1])
-    
-    with c2:
-        #adds some space at the top of the login box what unsafe_allow_html=True does is allow html code to be used in streamlit
-        st.markdown("<br><br>", unsafe_allow_html=True)  
-        st.markdown('<div class="login-container">', unsafe_allow_html=True)
-        st.title("I-Corps Login")
-        st.write("Please sign in to access the dashboard.")
     with c2:
         #adds some space at the top of the login box what unsafe_allow_html=True does is allow html code to be used in streamlit
         st.markdown("<br><br>", unsafe_allow_html=True)  
@@ -113,11 +67,7 @@ def login_page():
         
         username_input = st.text_input("Team Name")
         password_input = st.text_input("Password", type="password")
-        
-        if st.button("Login", key="login_btn"):
-            if attempt_login(username_input, password_input):
-                st.rerun() # Reload to show dashboard
-        
+    
         st.markdown('</div>', unsafe_allow_html=True)
         if st.button("Login", key="login_btn"):
             try :

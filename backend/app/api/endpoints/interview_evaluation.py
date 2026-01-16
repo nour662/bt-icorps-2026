@@ -102,11 +102,11 @@ async def get_status(task_id : str):
         "status" : result.status
     }
 @interview_evaluation_router.get("/result/{interview_id}", response_model=InterviewEvaluationResponse)
-async def get_result(interview_id :int):
-    interview = db.query(Interviews).filter(Interviews.id == interview_id)
+async def get_result(interview_id :int, db : Session = Depends(get_db)):
+    interview = db.query(Interviews).filter(Interviews.id == interview_id).first()
     response = InterviewEvaluationResponse(
         evaluation = interview.interviews_output,
-        summary = interview.interviews_summar
+        summary = interview.interviews_summary
     )
     return response
 

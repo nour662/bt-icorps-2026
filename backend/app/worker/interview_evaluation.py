@@ -1,10 +1,12 @@
 from app.core.celery_app import celery_app
+import json
 # from langchain_community.document_loaders import PyPDFLoader
 from langchain_openai import ChatOpenAI
 # from langchain.prompts.chat import ChatPromptTemplate
 #from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.runnables import RunnablePassthrough 
 from langchain_core.output_parsers import StrOutputParser
+
 
 # db models: 
 from app.models.interviews_table import Interviews
@@ -57,20 +59,19 @@ def evaluate_interview_task(self, hypothesis_id : int, team_id : str, interview_
     rag_excerpts = format_rows_for_prompt(rag_rows)
 
     try: 
-        prompt_inpupts = {
-            "industry" : team.idustry,
+        print("\nTASK STARTED\n")
+        prompt_inputs = {
+            "industry" : team.industry,
             "hypothesis" : hypothesis_text,
             "rag_excerpts" : rag_excerpts
         }
         prompt = INTERVIEW_EVALUATION_PROMPT.format_messages(**prompt_inputs)
         response = llm.invoke(prompt)
         response = response.content
-
         # extracts information in json format
         response_json = json.loads(response)
         summary = response_json["summary"]
-        evaluation = response_json["evaluation"]
-
+        evaluation = response_json["output"]
         # adds evauation information to db under the interview_id
         interview.interviews_output = evaluation
         interview.interviews_summary = summary
