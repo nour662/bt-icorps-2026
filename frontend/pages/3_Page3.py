@@ -4,6 +4,9 @@ from css import apply_css # Import the CSS styling
 from theme import i_corp_theme, sidebar
 from css import apply_css
 import streamlit as st
+import requests
+
+from streamlit_app import API_BASE
 
 i_corp_theme()  
 apply_css()       
@@ -27,6 +30,8 @@ with container:
         form_details = st.text_area("Enter your specific questions here (OPTIONAL):", key="interview_description")
         submitted = st.form_submit_button(label="Evaluate Interview")
 
+        hypo_id = 1 # need hypo id for route
+        
         #If the submit button is pressed to evaluate the hypothesis
         #Checks to see if there are any missing fields 
         if submitted: 
@@ -37,10 +42,65 @@ with container:
                 # db = SessionLocal()
                 #Loading animation because anlysis is not instant 
                 with st.spinner("Analyzing your Hypothesis"):
-
+                    try:
+                        current_team = st.session_state.get("current_user") 
+                        # presign_req = requests.post(
+                        #     f"{API_BASE}/interview/presign",
+                        #     json={
+                        #         "filename": hyp_selection.name,
+                        #         "content_type": "application/pdf"
+                        #     },
+                        #     timeout=30
+                        # )
+                        # presign_req.raise_for_status()
+                        # presign_res = presign_req.json()
+                        
+                        # upload_url = presign_res["upload_url"]
+                        # object_key = presign_res["object_key"]
+                        
+                        # upload_status = requests.put(
+                        #     upload_url, 
+                        #     data=hyp_selection.getvalue(),
+                        #     headers={"Content-Type": "application/pdf"}
+                        # )
+                        # upload_status.raise_for_status()
+                        
+                        eval_req = requests.post(
+                            f"{API_BASE}/interview/evaluate_interview",
+                            json={
+                                "hypothesis_id": hypo_id,
+                                "s3_key": object_key
+                            },
+                            timeout=30
+                        )  
+                        
+                        eval_req.raise_for_status()
+                        eval_res = eval_req.json()
+                        
+                        task_id = eval_res["task_id"]
+                        interview_id = eval_res["interviewee_id"]
+                        status = eval_res["status"]
+                        
+                        while status != "SUCCESS":
+                            time.sleep(2.5)
+                            status_check = requests.get(f"{API_BASE}/interview/status/{task_id}")
+                            status_check.raise_for_status()
+                            status = status_check.json()["status"]
+                        
+                        # if exit loop, status is success    
+                        result_res = requests.get(f"{API_BASE}/interview/result/{interview_id}")
+                        result_res.raise_for_status()
+                        output_dict = result_res.json()
+                            
+                        st.success("Analysis Complete!")
+                        st.info(output_dict["summary"])
+                            
+                        st.write(output_dict["evaluation"])
+                    except Exception as e:
+                        st.error(f"Error!")
                     #gets the current session that is in right now 
-                    current_team = st.session_state.get("current_user")
-                    time.sleep(3)
+                    # current_team = st.session_state.get("current_user")
+                    # time.sleep(3)
                     # req = requests.post(
                     #     f"{API_BASE}/interview/application/pdf/presign",
                     #     json={
